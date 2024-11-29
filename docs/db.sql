@@ -36,20 +36,12 @@ CREATE TABLE subject
     FOREIGN KEY (teacher_id) REFERENCES teacher (teacher_id)
 );
 
-CREATE TABLE student_subject
-(
-    PRIMARY KEY (student_id, subject_id),
-    student_id INT,
-    subject_id INT,
-    FOREIGN KEY (student_id) REFERENCES student (student_id),
-    FOREIGN KEY (subject_id) REFERENCES subject (subject_id)
-);
-
 CREATE TABLE grade
 (
     grade_id   INT PRIMARY KEY AUTO_INCREMENT,
     student_id INT NOT NULL,
     subject_id INT NOT NULL,
     grade      DECIMAL(2, 1),
-    FOREIGN KEY (student_id, subject_id) REFERENCES student_subject (student_id, subject_id)
+    FOREIGN KEY (student_id) REFERENCES student (student_id),
+    FOREIGN KEY (subject_id) REFERENCES subject (subject_id)
 );
