@@ -49,8 +49,8 @@ public class Main {
 
 //        System.out.println("All Classrooms:\n" + Arrays.asList(classroomA, classroomB));
 //        System.out.println(studentSulaiman.toString());
-//        System.out.println(teacherSulaiman.toString());
+        System.out.println(teacherSulaiman.toString());
 //        System.out.println(studentSulaimanB.toString());
-//        System.out.println(teacherSulaimanB.toString());
+        System.out.println(teacherSulaimanB.toString());
     }
 }
