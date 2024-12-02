@@ -9,18 +9,16 @@ public class Student extends AbstractUser implements FromDataBase{
     private String userName;
     private String password;
     private String email;
-    private boolean role;
     private ClassRoom classRoom;
 
-    public Student (int studentId, String firstName, String lastName, String userName,String password , String email, boolean role, ClassRoom classRoom) {
-        super(studentId, firstName,lastName,userName, password,email, role);
+    public Student (int studentId, String firstName, String lastName, String userName,String password , String email, ClassRoom classRoom) {
+        super(studentId, firstName,lastName,userName, password,email, false);
         this.studentId = studentId;
         this.firsteName = firstName;
         this.lastName = lastName;
         this.userName = userName;
         this.password = password;
         this.email = email;
-        this.role = role;
         this.classRoom = classRoom;
     }
 
@@ -67,10 +65,6 @@ public class Student extends AbstractUser implements FromDataBase{
         this.email = email;
     }
 
-    public boolean getRole() {
-        return role;
-    }
-
     public ArrayList<Subject> getSubject(ClassRoom classRoom) {
        return  this.classRoom.getSubjects();
     }
@@ -90,7 +84,6 @@ public class Student extends AbstractUser implements FromDataBase{
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
-                ", role=" + role +
                 ", classRoom=" + classRoom +
                 '}';
     }

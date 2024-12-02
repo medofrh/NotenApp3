@@ -9,13 +9,12 @@ public class Teacher extends AbstractUser implements FromDataBase{
     private String userName;
     private String password;
     private String email;
-    private boolean role;
     private ArrayList<Subject> subject;
     private ArrayList<ClassRoom> classRoom;
 
 
-    public Teacher(int tacherId, String firstName, String lastName, String userName,String password , String email, boolean role, Subject subject,ClassRoom classRoom) {
-        super(tacherId, firstName,lastName,userName, password,email, role);
+    public Teacher(int tacherId, String firstName, String lastName, String userName,String password , String email, Subject subject,ClassRoom classRoom) {
+        super(tacherId, firstName,lastName,userName, password,email, true);
         this.subject = new ArrayList<Subject>();
         this.classRoom = new ArrayList<ClassRoom>();
         this.tacherId = tacherId;
@@ -24,7 +23,6 @@ public class Teacher extends AbstractUser implements FromDataBase{
         this.userName = userName;
         this.password = password;
         this.email = email;
-        this.role = role;
         this.subject.add(subject);
         this.classRoom.add(classRoom);
     }
@@ -69,10 +67,6 @@ public class Teacher extends AbstractUser implements FromDataBase{
         this.email = email;
     }
 
-    public boolean getRole() {
-        return role;
-    }
-
     public void addSubject(Subject subject) {
             this.subject.add(subject);
     }
@@ -101,7 +95,6 @@ public class Teacher extends AbstractUser implements FromDataBase{
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +
                 ", email='" + email + '\'' +
-                ", role=" + role +
                 ", subject=" + subject +
                 ", classRoom=" + classRoom +
                 '}';
