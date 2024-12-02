@@ -1,7 +1,7 @@
 package org.sulaiman;
 
-abstract public class User {
-    private String userId;
+abstract public class AbstractUser {
+    private int userId;
     private String firstName;
     private String lastName;
     private String username;
@@ -10,7 +10,7 @@ abstract public class User {
     private boolean role;
     private DB dbConnection;
 
-    public User(String userId, String firstName, String lastName, String username, String password, String email, boolean role) {
+    public AbstractUser(int userId, String firstName, String lastName, String username, String password, String email, boolean role) {
         this.userId = userId;
         this.firstName = firstName;
         this.lastName = lastName;
@@ -31,11 +31,11 @@ abstract public class User {
 
     public void deleteAccount(){}
 
-    public String getUserId() {
+    public int getUserId() {
         return userId;
     }
 
-    public void setUserId(String userId) {
+    public void setUserId(int userId) {
         this.userId = userId;
     }
 
