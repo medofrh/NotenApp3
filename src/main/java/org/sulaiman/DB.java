@@ -76,7 +76,16 @@ public class DB {
         return -1;
     }
 
-    public void update(String sql) {
+    public void update(FromDataBase object) throws Exception {
+        String sql;
+        if (object.getClass() == Student.class){
+            Student student = (Student) object;
+            sql = "UPDATE student SET name = '" + student.getFirstName() + "' WHERE studentId = " + student.getStudentId();
+        }else{
+            // TODO: error handle for other classes
+            throw new Exception("Class not supported");
+        }
+
         try {
             PreparedStatement pstmt = this.connection.prepareStatement(sql);
             pstmt.executeUpdate();
