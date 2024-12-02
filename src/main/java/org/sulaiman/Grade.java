@@ -1,6 +1,6 @@
 package org.sulaiman;
 
-public class Grade {
+public class Grade implements FromDataBase{
     private int gradeId;
     private Student student;
     private Subject subject;
@@ -44,5 +44,14 @@ public class Grade {
 
     public void setGradeNumber(double gradeNumber) {
         this.gradeNumber = gradeNumber;
+    }
+
+    public String toString() {
+        return "Grade{" +
+                "gradeId=" + gradeId +
+                ", student=" + student +
+                ", subject=" + subject +
+                ", gradeNumber=" + gradeNumber +
+                '}';
     }
 }
