@@ -73,7 +73,7 @@ public class Student extends AbstractUser implements FromDataBase{
         return classRoom;
     }
 
-    public Grade getGrade(Subject subj){
+    public ArrayList<Grade> getGrade(Subject subj){
         return subj.getGrade();
     }
     public String toString() {
