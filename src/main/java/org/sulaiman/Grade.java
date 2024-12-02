@@ -12,6 +12,11 @@ public class Grade implements FromDataBase{
         this.student = student;
         this.subject = subject;
         this.gradeNumber = gradeNumber;
+
+        if(subject != null){
+            subject.addGrade(this);
+        }
+
     }
 
     public int getGradeId() {
