@@ -1,2 +1,4 @@
-package org.sulaiman;public interface FromDataBase {
+package org.sulaiman;
+
+public interface FromDataBase {
 }
