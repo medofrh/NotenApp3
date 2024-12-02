@@ -30,14 +30,6 @@ public class Subject implements FromDataBase{
         this.name = name;
     }
 
-    public Grade getGrade() {
-        return grade;
-    }
-
-    public void setGrade(Student student, Grade grade) {
-        this.grade = grade;
-    }
-
     public String toString() {
         return "{\n" +
                 "subjectId=" + subjectId +
