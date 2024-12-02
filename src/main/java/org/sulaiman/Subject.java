@@ -1,16 +1,17 @@
 package org.sulaiman;
 
-public class Subject {
-    private int subjectId;
+public class Subject implements FromDataBase{
+    private int subjectId ;
+    private static int counter= 0;
     private String name;
-    private ClassRoom classRoom;
-    private Teacher teacher;
 
-    public Subject(int subjectId, String name, ClassRoom classRoom, Teacher teacher) {
-        this.subjectId = subjectId;
+    private Grade grade;
+
+    public Subject(String name) {
         this.name = name;
-        this.classRoom = classRoom;
-        this.teacher = teacher;
+        ++counter;
+        this.subjectId = counter;
+
     }
 
     public int getSubjectId() {
@@ -29,19 +30,19 @@ public class Subject {
         this.name = name;
     }
 
-    public ClassRoom getClassRoom() {
-        return classRoom;
+    public Grade getGrade() {
+        return grade;
     }
 
-    public void setClassRoom(ClassRoom classRoom) {
-        this.classRoom = classRoom;
+    public void setGrade(Student student, Grade grade) {
+        this.grade = grade;
     }
 
-    public Teacher getTeacher() {
-        return teacher;
-    }
-
-    public void setTeacher(Teacher teacher) {
-        this.teacher = teacher;
+    public String toString() {
+        return "{\n" +
+                "subjectId=" + subjectId +
+                ", name='" + name +
+                ", grade=" + grade +
+                "}"+ "\n";
     }
 }
