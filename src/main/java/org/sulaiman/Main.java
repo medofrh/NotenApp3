@@ -32,23 +32,16 @@ public class Main {
         Student studentSulaiman = new Student(1, "Sulaiman", "Alghnam", "sulaiman", "1234", "emailSulaiman" ,classroomA);
 
         Student studentAli = new Student(2, "Ali", "Alghnam", "ali", "1234", "emailAli", classroomA);
-        Student studentAhmed = new Student(3, "Ahmed", "Alghnam", "ahmed", "1234", "emailAhmed", classroomA);
 
-        Teacher teacherSulaiman = new Teacher(1, "Sulaiman", "Alghnam", "sulaiman", "1234", "emailSulaiman", sub1,classroomA);
-        Teacher teacherAli = new Teacher(2, "Ali", "Alghnam", "ali", "1234", "emailAli", sub2,classroomA);
         Teacher teacherAhmed = new Teacher(3, "Ahmed", "Alghnam", "ahmed", "1234", "emailAhmed", sub3,classroomA);
 
-        Student studentSulaimanB = new Student(4, "Khaled", "Alghnam", "khaled", "1234", "emailKhaled", classroomB);
         Student studentAliB = new Student(5, "Mohammed", "Alghnam", "mohammed", "1234", "emailMohammed", classroomB);
-        Student studentAhmedB = new Student(6, "Abdullah", "Alghnam", "abdullah", "1234", "emailAbdullah", classroomB);
 
         Teacher teacherSulaimanB = new Teacher(4, "Khaled", "Alghnam", "khaled", "1234", "emailKhaled", sub4, classroomB);
-        Teacher teacherAliB = new Teacher(5, "Mohammed", "Alghnam", "mohammed", "1234", "emailMohammed", sub5, classroomB);
-        Teacher teacherAhmedB = new Teacher(6, "Abdullah", "Alghnam", "abdullah", "1234", "emailAbdullah", sub6, classroomB);
 
         Grade grade1 = new Grade(1, studentSulaiman, sub1, 90);
         Grade grade2 = new Grade(2, studentAli, sub2, 80);
-        Grade grade3 = new Grade(3, studentAhmed, sub3, 70);
+        Grade grade3 = new Grade(3, studentAliB, sub3, 70);
 
 //        System.out.println("All Classrooms:\n" + Arrays.asList(classroomA, classroomB));
 //        System.out.println(studentSulaiman.toString());

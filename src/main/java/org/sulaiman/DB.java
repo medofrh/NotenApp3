@@ -80,7 +80,7 @@ public class DB {
         String sql;
         if (object.getClass() == Student.class){
             Student student = (Student) object;
-            sql = "UPDATE student SET name = '" + student.getFirstName() + "' WHERE studentId = " + student.getStudentId();
+            sql = "UPDATE student SET name = '" + student.getFirstName() + "' WHERE studentId = " + student.getUserId();
         }else{
             // TODO: error handle for other classes
             throw new Exception("Class not supported");

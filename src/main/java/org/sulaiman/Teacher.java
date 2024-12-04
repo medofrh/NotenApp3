@@ -40,7 +40,7 @@ public class Teacher extends AbstractUser implements FromDataBase{
                 "teacherId=" + super.getUserId() +
                 ", firstName='" + super.getFirstName() + '\'' +
                 ", lastName='" + super.getLastName() + '\'' +
-                ", userName='" + super.getUsername() + '\'' +
+                ", userName='" + super.getUserName() + '\'' +
                 ", password='" + super.getPassword() + '\'' +
                 ", email='" + super.getEmail() + '\'' +
                 ", subject=" + subject +
