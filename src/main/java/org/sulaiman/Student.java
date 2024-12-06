@@ -1,38 +1,15 @@
 package org.sulaiman;
 
+import com.mysql.cj.x.protobuf.MysqlxSession;
+
 import java.util.ArrayList;
 
-public class Student extends AbstractUser implements FromDataBase{
-    private ClassRoom classRoom;
+public class Student extends AbstractUser {
+    private ArrayList<Subject> subjects;
 
-    public Student (int studentId, String firstName, String lastName, String userName,String password , String email, ClassRoom classRoom) {
+    public Student (int studentId, String firstName, String lastName, String userName,String password , String email) {
         super(studentId, firstName,lastName,userName, password,email, false);
-        this.classRoom = classRoom;
-    }
-
-    public ArrayList<Subject> getSubject(ClassRoom classRoom) {
-       return this.classRoom.getSubjects();
-    }
-
-    public ClassRoom getClassRoom() {
-        return classRoom;
-    }
-
-    public ArrayList<Grade> getGrade(Subject subj){
-        return subj.getGrade();
-    }
-
-    public String toString() {
-//        TODO: remove password from toString
-        return "Student{" +
-                "studentId=" + super.getUserId() +
-                ", firsteName='" + super.getFirstName() + '\'' +
-                ", lastName='" + super.getLastName() + '\'' +
-                ", userName='" + super.getUserName() + '\'' +
-                ", password='" + super.getPassword() + '\'' +
-                ", email='" + super.getEmail() + '\'' +
-                ", classRoom=" + classRoom +
-                '}';
+        this.subjects = new ArrayList<>();
     }
 
     @Override
@@ -58,5 +35,36 @@ public class Student extends AbstractUser implements FromDataBase{
     @Override
     public void deleteAccount() {
 
+    }
+
+
+    public void addSubject(Subject subject) {
+        if(this.subjects.contains(subject)) return;
+
+        this.subjects.add(subject);
+        subject.addStudent(this);
+    }
+    public void removeSubject(Subject subject) {
+        if(!this.subjects.contains(subject)) return;
+
+        this.subjects.remove(subject);
+        subject.removeStudent(this);
+    }
+    public ArrayList<Subject> getSubjects() {
+        return this.subjects;
+    }
+
+    public ArrayList<Grade> getGrades()  {
+        ArrayList<Grade> grades = new ArrayList<>();
+
+        for (Subject subject : subjects) {
+            for (Grade grade : subject.getGrades()) {
+                if(grade.getStudent() == this) {
+                    grades.add(grade);
+                }
+            }
+        }
+
+        return grades;
     }
 }

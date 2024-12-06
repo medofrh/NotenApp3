@@ -5,33 +5,14 @@ import java.util.ArrayList;
 public class ClassRoom implements FromDataBase{
     private final int classRoomId;
     private String name;
-
-    private ArrayList<Student> students;
     private ArrayList<Subject> subjects;
 
-    public ClassRoom(int classRoomId, String name, ArrayList<Subject> subjects) {
+    public ClassRoom(int classRoomId, String name) {
         this.classRoomId = classRoomId;
         this.name = name;
-        this.subjects = (subjects != null) ? subjects : new ArrayList<>();
-        this.students = new ArrayList<>();
+        this.subjects = new ArrayList<>();
     }
 
-    public void addStudent(Student student){
-        if(student == null){
-            throw new IllegalArgumentException("Student can't be null");
-        }
-        this.students.add(student);
-    }
-
-    public void removeStudent(Student student){
-        if(student == null){
-            throw new IllegalArgumentException("Student can't be null");
-        }
-        this.students.remove(student);
-    }
-    public ArrayList<Student> getStudents() {
-        return students;
-    }
     public void addSubject(Subject subject){
         this.subjects.add(subject);
     }
@@ -53,6 +34,11 @@ public class ClassRoom implements FromDataBase{
             throw new IllegalArgumentException("ClassRoom name can't be empty");
         }
         this.name = name;
+    }
+
+    @Override
+    public int getUid() {
+        return this.classRoomId;
     }
 
     public String toString() {

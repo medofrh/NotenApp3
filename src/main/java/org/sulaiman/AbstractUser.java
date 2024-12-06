@@ -1,6 +1,6 @@
 package org.sulaiman;
 
-abstract public class AbstractUser {
+abstract public class AbstractUser implements FromDataBase {
     private int userId;
     private String firstName;
     private String lastName;
@@ -85,5 +85,13 @@ abstract public class AbstractUser {
 
     public void setRole(boolean role) {
         this.role = role;
+    }
+
+    public int getUid() {
+        return this.userId;
+    }
+
+    public boolean isTeacher() {
+        return this.role;
     }
 }

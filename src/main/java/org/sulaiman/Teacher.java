@@ -2,17 +2,19 @@ package org.sulaiman;
 
 import java.util.ArrayList;
 
-public class Teacher extends AbstractUser implements FromDataBase{
+public class Teacher extends AbstractUser {
     private ArrayList<Subject> subject;
     private ArrayList<ClassRoom> classRoom;
 
 
-    public Teacher(int teacherId, String firstName, String lastName, String userName, String password, String email, Subject subject,ClassRoom classRoom) {
+    public Teacher(int teacherId, String firstName, String lastName, String userName, String password, String email) {
         super(teacherId, firstName,lastName,userName, password,email, true);
         this.subject = new ArrayList<Subject>();
         this.classRoom = new ArrayList<ClassRoom>();
-        this.subject.add(subject);
-        this.classRoom.add(classRoom);
+    }
+
+    public void removeSubject(Subject subject) {
+        this.subject.remove(subject);
     }
 
     public void addSubject(Subject subject) {
@@ -29,25 +31,6 @@ public class Teacher extends AbstractUser implements FromDataBase{
 
     public ArrayList<ClassRoom> getClassRoom() {
         return this.classRoom;
-    }
-    public void addSubGrade(Subject subject, Student student, int score){
-        //TODO Hier braucehn wir factory mthode pattern, weil class Grade muss dann erzeugt werden wenn diese Methode aufgerufen wird
-        Grade grade = GradeFactory.createGrade(subject,student,score);
-        subject.addGrade(grade);
-    }
-
-    public String toString() {
-//        TODO: remove password from toString
-        return "Teacher{" +
-                "teacherId=" + super.getUserId() +
-                ", firstName='" + super.getFirstName() + '\'' +
-                ", lastName='" + super.getLastName() + '\'' +
-                ", userName='" + super.getUserName() + '\'' +
-                ", password='" + super.getPassword() + '\'' +
-                ", email='" + super.getEmail() + '\'' +
-                ", subject=" + subject +
-                ", classRoom=" + classRoom +
-                '}';
     }
 
     @Override

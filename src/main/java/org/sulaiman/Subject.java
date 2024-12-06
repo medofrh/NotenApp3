@@ -3,16 +3,21 @@ package org.sulaiman;
 import java.util.ArrayList;
 public class Subject implements FromDataBase{
     private int subjectId ;
-    private static int counter= 0;
     private String name;
+    private ClassRoom classRoom;
+    private Teacher teacher;
+    private ArrayList<Student> students;
 
     private ArrayList<Grade> grades;
 
-    public Subject(String name) {
+    public Subject(int uid, String name, ClassRoom classRoom, Teacher teacher) {
         this.name = name;
-        ++counter;
-        this.subjectId = counter;
+        this.subjectId = uid;
         this.grades = new ArrayList<>();
+        this.students = new ArrayList<>();
+
+        this.changeClassRoom(classRoom);
+        this.changeTeacher(teacher);
     }
 
     public int getSubjectId() {
@@ -39,14 +44,60 @@ public class Subject implements FromDataBase{
         grades.add(grade);
     }
 
-    public ArrayList<Grade> getGrade(){
+    public ArrayList<Grade> getGrades(){
         return grades;
     }
 
-    public String toString() {
-        return "{\n" +
-                "subjectId=" + subjectId +
-                ", name='" + name +
-                "}"+ "\n";
+
+    @Override
+    public int getUid() {
+        return this.subjectId;
+    }
+
+
+    public ClassRoom getClassRoom() {
+        return classRoom;
+    }
+
+    public void changeClassRoom(ClassRoom classRoom) {
+        if(this.classRoom != null)
+            this.classRoom.removeSubject(this);
+
+        this.classRoom = classRoom;
+        this.classRoom.addSubject(this);
+    }
+
+    public void changeTeacher(Teacher teacher) {
+        if(this.teacher != null)
+            this.teacher.removeSubject(this);
+
+        this.teacher = teacher;
+        this.teacher.addSubject(this);
+    }
+
+    public void addStudent(Student student){
+        if(this.students.contains(student)) return;
+
+        this.students.add(student);
+        student.addSubject(this);
+    }
+    public void removeStudent(Student student){
+        if(!this.students.contains(student)) return;
+
+        this.students.remove(student);
+        student.removeSubject(this);
+
+        // delete grades
+        DatabaseList<Grade> remainingGrade = new DatabaseList<>();
+        for(Grade grade : this.getGrades()) {
+            if(grade.getStudent() != student) {
+                remainingGrade.add(grade);
+            }
+        }
+        this.grades = remainingGrade;
+    }
+
+    public ArrayList<Student> getStudents() {
+        return students;
     }
 }

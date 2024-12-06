@@ -1,23 +1,16 @@
 package org.sulaiman;
 
-public class Grade implements FromDataBase{
-    private static int counter= 0;
-    private final int gradeId;
+public class Grade implements FromDataBase {
+    private int gradeId;
     private final Student student;
     private final Subject subject;
     private double gradeNumber;
 
-    public Grade(Student student, Subject subject, double gradeNumber) {
-        counter++;
-        this.gradeId = counter;
+    public Grade(int uid, Student student, Subject subject, double gradeNumber) {
+        this.gradeId = uid;
         this.student = student;
         this.subject = subject;
         this.gradeNumber = gradeNumber;
-
-        if(subject == null){
-            throw new IllegalArgumentException("Subject can't be null");
-        }
-        subject.addGrade(this);
     }
 
     public int getGradeId() {
@@ -41,12 +34,7 @@ public class Grade implements FromDataBase{
     }
 
     @Override
-    public String toString() {
-        return "Grade{" +
-                "gradeId=" + gradeId +
-                ", studentId=" + (student != null ? student.getUserId() : "null") +
-                ", subjectName=" + (subject != null ? subject.getName() : "null") +
-                ", gradeNumber=" + gradeNumber +
-                '}';
+    public int getUid() {
+        return this.gradeId;
     }
 }
