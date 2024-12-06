@@ -3,7 +3,7 @@ package org.sulaiman;
 import java.util.ArrayList;
 
 public class ClassRoom implements FromDataBase{
-    private int classRoomId;
+    private final int classRoomId;
     private String name;
 
     private ArrayList<Student> students;
@@ -12,13 +12,35 @@ public class ClassRoom implements FromDataBase{
     public ClassRoom(int classRoomId, String name, ArrayList<Subject> subjects) {
         this.classRoomId = classRoomId;
         this.name = name;
-        this.subjects = subjects;
+        this.subjects = (subjects != null) ? subjects : new ArrayList<>();
+        this.students = new ArrayList<>();
+    }
+
+    public void addStudent(Student student){
+        if(student == null){
+            throw new IllegalArgumentException("Student can't be null");
+        }
+        this.students.add(student);
+    }
+
+    public void removeStudent(Student student){
+        if(student == null){
+            throw new IllegalArgumentException("Student can't be null");
+        }
+        this.students.remove(student);
+    }
+    public ArrayList<Student> getStudents() {
+        return students;
     }
     public void addSubject(Subject subject){
         this.subjects.add(subject);
     }
+
+    public void removeSubject(Subject subject){
+        this.subjects.remove(subject);
+    }
     public ArrayList<Subject> getSubjects() {
-        return subjects;
+        return new ArrayList<>(subjects);
     }
     public int getClassRoomId() {
         return classRoomId;
@@ -27,9 +49,11 @@ public class ClassRoom implements FromDataBase{
         return name;
     }
     public void setName(String name) {
+        if(name == null || name.trim().isEmpty()){
+            throw new IllegalArgumentException("ClassRoom name can't be empty");
+        }
         this.name = name;
     }
-    //TODO removeSubject method
 
     public String toString() {
         return "ClassRoom{\n" +
