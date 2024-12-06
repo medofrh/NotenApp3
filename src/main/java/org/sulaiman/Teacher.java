@@ -47,4 +47,29 @@ public class Teacher extends AbstractUser implements FromDataBase{
                 ", classRoom=" + classRoom +
                 '}';
     }
+
+    @Override
+    public boolean login() {
+        return false;
+    }
+
+    @Override
+    public boolean logout() {
+        return false;
+    }
+
+    @Override
+    public void changePassword() {
+
+    }
+
+    @Override
+    public void updateUserData() {
+
+    }
+
+    @Override
+    public void deleteAccount() {
+
+    }
 }

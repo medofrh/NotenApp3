@@ -21,15 +21,15 @@ abstract public class AbstractUser {
         this.dbConnection = new DB();
     }
 
-    public boolean login(){return false;}
+    public abstract boolean login();
 
-    public boolean logout(){return false;}
+    public abstract boolean logout();
 
-    public void changePassword(String newPassword){}
+    public abstract void changePassword();
 
-    public void updateUserData(){}
+    public abstract void updateUserData();
 
-    public void deleteAccount(){}
+    public abstract void deleteAccount();
 
     public int getUserId() {
         return userId;

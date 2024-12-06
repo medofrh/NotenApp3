@@ -21,6 +21,7 @@ public class Student extends AbstractUser implements FromDataBase{
     public ArrayList<Grade> getGrade(Subject subj){
         return subj.getGrade();
     }
+
     public String toString() {
         return "Student{" +
                 "studentId=" + super.getUserId() +
@@ -31,5 +32,30 @@ public class Student extends AbstractUser implements FromDataBase{
                 ", email='" + super.getEmail() + '\'' +
                 ", classRoom=" + classRoom +
                 '}';
+    }
+
+    @Override
+    public boolean login() {
+        return false;
+    }
+
+    @Override
+    public boolean logout() {
+        return false;
+    }
+
+    @Override
+    public void changePassword() {
+
+    }
+
+    @Override
+    public void updateUserData() {
+
+    }
+
+    @Override
+    public void deleteAccount() {
+
     }
 }
