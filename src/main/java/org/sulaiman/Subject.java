@@ -35,6 +35,7 @@ public class Subject implements FromDataBase{
     }
 
     public void addGrade(Grade grade){
+        // TODO: It could be a list of grades for the same subject. So we need to check if the grade is already added and add grades to the list. grades.addALL(grades)
         grades.add(grade);
     }
 
