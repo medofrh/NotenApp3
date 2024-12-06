@@ -28,6 +28,9 @@ public class Subject implements FromDataBase{
     }
 
     public void setName(String name) {
+        if(name == null || name.trim().isEmpty()){
+            throw new IllegalArgumentException("Subject name can't be empty");
+        }
         this.name = name;
     }
 
