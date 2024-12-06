@@ -36,6 +36,7 @@ public class Teacher extends AbstractUser implements FromDataBase{
     }
 
     public String toString() {
+//        TODO: remove password from toString
         return "Teacher{" +
                 "teacherId=" + super.getUserId() +
                 ", firstName='" + super.getFirstName() + '\'' +

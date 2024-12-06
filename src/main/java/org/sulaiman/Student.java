@@ -11,7 +11,7 @@ public class Student extends AbstractUser implements FromDataBase{
     }
 
     public ArrayList<Subject> getSubject(ClassRoom classRoom) {
-       return  this.classRoom.getSubjects();
+       return this.classRoom.getSubjects();
     }
 
     public ClassRoom getClassRoom() {
@@ -23,6 +23,7 @@ public class Student extends AbstractUser implements FromDataBase{
     }
 
     public String toString() {
+//        TODO: remove password from toString
         return "Student{" +
                 "studentId=" + super.getUserId() +
                 ", firsteName='" + super.getFirstName() + '\'' +
