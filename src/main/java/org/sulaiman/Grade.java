@@ -2,13 +2,15 @@ package org.sulaiman;
 
 public class Grade implements FromDataBase{
     private int gradeId;
+    private static int counter= 0;
     private Student student;
     private int subjectId;
 
     private double gradeNumber;
 
-    public Grade(int gradeId, Student student, Subject subject, double gradeNumber) {
-        this.gradeId = gradeId;
+    public Grade(Student student, Subject subject, double gradeNumber) {
+        counter++;
+        this.gradeId = counter;
         this.student = student;
         this.subjectId = subject.getSubjectId();
         this.gradeNumber = gradeNumber;

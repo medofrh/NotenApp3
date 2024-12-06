@@ -30,8 +30,9 @@ public class Teacher extends AbstractUser implements FromDataBase{
     public ArrayList<ClassRoom> getClassRoom() {
         return this.classRoom;
     }
-    public void addSubGrade(Subject subject,Student student, Grade grade){
+    public void addSubGrade(Subject subject, Student student, int score){
         //TODO Hier braucehn wir factory mthode pattern, weil class Grade muss dann erzeugt werden wenn diese Methode aufgerufen wird
+        Grade grade = GradeFactory.createGrade(subject,student,score);
         subject.addGrade(grade);
     }
 

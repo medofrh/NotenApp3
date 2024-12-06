@@ -42,11 +42,15 @@ public class Main {
         teacherSulaimanB.addSubject(sub5);
         teacherSulaimanB.addSubject(sub6);
 
-        Grade grade1 = new Grade(1, studentSulaiman, sub1, 90);
-        Grade grade2 = new Grade(2, studentAli, sub2, 80);
-        Grade grade3 = new Grade(3, studentAliB, sub3, 70);
-        Grade grade3_1 = new Grade(4, studentAli, sub3, 70);
-        Grade grade4 = new Grade(5, studentSulaiman, sub4, 60);
+        Grade grade1 = new Grade(studentSulaiman, sub1, 90);
+        Grade grade2 = new Grade(studentAli, sub2, 80);
+        Grade grade3 = new Grade(studentAliB, sub3, 70);
+        Grade grade3_1 = new Grade(studentAli, sub3, 70);
+        Grade grade4 = new Grade(studentSulaiman, sub4, 60);
+
+        teacherAhmed.addSubGrade(sub1, studentSulaiman, 90);
+        teacherAhmed.addSubGrade(sub2, studentAli, 80);
+        teacherAhmed.addSubGrade(sub3, studentAliB, 70);
 
 //        System.out.println("All Classrooms:\n" + Arrays.asList(classroomA, classroomB));
 //        System.out.println(studentSulaiman.toString());
