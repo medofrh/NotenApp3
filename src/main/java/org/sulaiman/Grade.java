@@ -3,14 +3,14 @@ package org.sulaiman;
 public class Grade implements FromDataBase{
     private int gradeId;
     private Student student;
-    private Subject subject;
+    private int subjectId;
 
     private double gradeNumber;
 
     public Grade(int gradeId, Student student, Subject subject, double gradeNumber) {
         this.gradeId = gradeId;
         this.student = student;
-        this.subject = subject;
+        this.subjectId = subject.getSubjectId();
         this.gradeNumber = gradeNumber;
 
         if(subject != null){
@@ -35,12 +35,12 @@ public class Grade implements FromDataBase{
         this.student = student;
     }
 
-    public Subject getSubject() {
-        return subject;
+    public int getSubjectId() {
+        return subjectId;
     }
 
-    public void setSubject(Subject subject) {
-        this.subject = subject;
+    public void setSubjectId(int subject) {
+        this.subjectId = subject;
     }
 
     public double getGradeNumber() {
@@ -55,7 +55,7 @@ public class Grade implements FromDataBase{
         return "Grade{" +
                 "gradeId=" + gradeId +
                 ", student=" + student +
-                ", subject=" + subject +
+                ", subject=" + subjectId +
                 ", gradeNumber=" + gradeNumber +
                 '}';
     }

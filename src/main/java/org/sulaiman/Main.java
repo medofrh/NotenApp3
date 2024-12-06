@@ -25,23 +25,28 @@ public class Main {
         subjectsB.add(sub5);
         subjectsB.add(sub6);
 
-
         ClassRoom classroomA = new ClassRoom(1, "A",subjectsA);
         ClassRoom classroomB = new ClassRoom(2, "B",subjectsB);
 
         Student studentSulaiman = new Student(1, "Sulaiman", "Alghnam", "sulaiman", "1234", "emailSulaiman" ,classroomA);
 
         Student studentAli = new Student(2, "Ali", "Alghnam", "ali", "1234", "emailAli", classroomA);
-
-        Teacher teacherAhmed = new Teacher(3, "Ahmed", "Alghnam", "ahmed", "1234", "emailAhmed", sub3,classroomA);
-
         Student studentAliB = new Student(5, "Mohammed", "Alghnam", "mohammed", "1234", "emailMohammed", classroomB);
 
+        Teacher teacherAhmed = new Teacher(3, "Ahmed", "Alghnam", "ahmed", "1234", "emailAhmed", sub3,classroomA);
         Teacher teacherSulaimanB = new Teacher(4, "Khaled", "Alghnam", "khaled", "1234", "emailKhaled", sub4, classroomB);
+
+        teacherAhmed.addSubject(sub1);
+        teacherAhmed.addSubject(sub2);
+
+        teacherSulaimanB.addSubject(sub5);
+        teacherSulaimanB.addSubject(sub6);
 
         Grade grade1 = new Grade(1, studentSulaiman, sub1, 90);
         Grade grade2 = new Grade(2, studentAli, sub2, 80);
         Grade grade3 = new Grade(3, studentAliB, sub3, 70);
+        Grade grade3_1 = new Grade(4, studentAli, sub3, 70);
+        Grade grade4 = new Grade(5, studentSulaiman, sub4, 60);
 
 //        System.out.println("All Classrooms:\n" + Arrays.asList(classroomA, classroomB));
 //        System.out.println(studentSulaiman.toString());
