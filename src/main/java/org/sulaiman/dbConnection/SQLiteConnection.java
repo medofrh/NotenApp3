@@ -2,10 +2,10 @@ package org.sulaiman.dbConnection;
 
 import java.sql.*;
 public class SQLiteConnection {
+    static final String sqliteUrl = "jdbc:sqlite:local.db";
     public static Connection getConnection() {
         try {
             // save sqlite database in resources in database folder
-            String sqliteUrl = "jdbc:sqlite:src/main/resources/database/local.db";
             return DriverManager.getConnection(sqliteUrl);
         } catch (SQLException e) {
             return null;
