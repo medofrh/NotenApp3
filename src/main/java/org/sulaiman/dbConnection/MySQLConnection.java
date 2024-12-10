@@ -20,4 +20,12 @@ public class MySQLConnection {
             return null;
         }
     }
+
+    public boolean testConnection() {
+        try (Connection conn = getConnection()) {
+            return conn != null;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
 }
