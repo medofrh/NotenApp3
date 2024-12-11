@@ -28,4 +28,8 @@ public class MySQLConnection {
             return false;
         }
     }
+
+    public static String getDatabaseName() {
+        return database;
+    }
 }
