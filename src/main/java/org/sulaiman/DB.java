@@ -3,6 +3,7 @@ package org.sulaiman;
 import io.github.cdimascio.dotenv.Dotenv;
 
 import java.sql.*;
+import java.io.File;
 
 public class DB {
     private Connection connection;
@@ -11,6 +12,7 @@ public class DB {
     private final String host;
     private final String database;
     private final int port;
+    private final String sqliteDbPath = "local.db";
 
     public DB() {
         Dotenv dotenv = Dotenv.load();
@@ -20,86 +22,88 @@ public class DB {
         this.database = dotenv.get("DB_NAME");
         this.port = Integer.parseInt(dotenv.get("DB_PORT"));
     }
-    // #TODO: add filter to sql query
 
     public Connection connect() throws SQLException {
         if (this.connection == null || this.connection.isClosed()) {
-            // Load MySQL JDBC driver explicitly if necessary
             try {
+                // try to connect to MySQL
                 Class.forName("com.mysql.cj.jdbc.Driver");
-            } catch (ClassNotFoundException e) {
-                System.out.println("MySQL JDBC Driver not found");
-                e.printStackTrace();
+                String mysqlUrl = "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database +
+                        "?useSSL=false&serverTimezone=UTC";
+                this.connection = DriverManager.getConnection(mysqlUrl, this.username, this.password);
+                System.out.println("Connected to MySQL");
+            }catch (ClassNotFoundException | SQLException e){
+                // Fall back to SQLite if MySQL is not available
+                System.out.println("MySQL not available, falling back to SQLite");
+                this.connection = DriverManager.getConnection("jdbc:sqlite:" + sqliteDbPath);
             }
-
-            // Enhanced URL with additional properties
-            String url = "jdbc:mysql://" + this.host + ":" + this.port + "/" + this.database +
-                    "?useSSL=false&serverTimezone=UTC";
-            this.connection = DriverManager.getConnection(url, this.username, this.password);
         }
         return this.connection;
     }
 
-    public void close() {
+    public void closeConnection () throws SQLException {
+        if (this.connection != null && !this.connection.isClosed()) {
+            this.connection.close();
+            System.out.println("Database connection closed.");
+        }
+    }
+
+    public ResultSet select(String sql) throws SQLException {
+        PreparedStatement pstmt = this.connection.prepareStatement(sql);
+        return pstmt.executeQuery();
+    }
+
+    public void syncDatabases() throws SQLException {
+        //check if connection is established and it's SQLite
+        if(this.connection.getMetaData().getURL().contains("sqlite")) {
+            try(Statement stmt = this.connection.createStatement()) {
+                ResultSet rs = stmt.executeQuery("SELECT * FROM grades");
+                while (rs.next()) {
+                    int gradeId = rs.getInt("grade_id");
+                    int studentId = rs.getInt("student_id");
+                    int grade = rs.getInt("grade");
+
+                    // Insert the data into MySQL
+                    insertIntoMySQL(gradeId, studentId, grade);
+                }
+            }
+        }
+    }
+
+    public void syncTableToMySQL(String tableName, String[] columns) throws SQLException {
+        // check if connection is established and it's SQLite
+        if (!this.connection.getMetaData().getURL().contains("sqlite")) {
+            return;
+        }
         try {
-            if (this.connection != null && !this.connection.isClosed()) {
-                this.connection.close();
-                System.out.println("Database connection closed.");
+            Statement stmt = this.connection.createStatement();
+            ResultSet rs = stmt.executeQuery("SELECT * FROM " + tableName);
+            while (rs.next()) {
+                String sql = "INSERT INTO " + tableName + " (";
+                for (String column : columns) {
+                    sql += column + ", ";
+                }
+                sql = sql.substring(0, sql.length() - 2) + ") VALUES (";
+                for (String column : columns) {
+                    sql += rs.getString(column) + ", ";
+                }
+                sql = sql.substring(0, sql.length() - 2) + ")";
+                try (PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
+                    pstmt.executeUpdate();
+                }
             }
         } catch (SQLException e) {
-            System.out.println("Error closing the database connection");
             e.printStackTrace();
-        }
-    }
-
-    public ResultSet select(String sql) {
-        try {
-            PreparedStatement pstmt = this.connection.prepareStatement(sql);
-            return pstmt.executeQuery();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public int insert(String sql) {
-        try {
-            PreparedStatement pstmt = this.connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);
-            pstmt.executeUpdate();
-            ResultSet rs = pstmt.getGeneratedKeys();
-            if (rs.next()) {
-                return rs.getInt(1);
             }
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        return -1;
     }
 
-    public void update(FromDataBase object) throws Exception {
-        String sql;
-        if (object.getClass() == Student.class){
-            Student student = (Student) object;
-            sql = "UPDATE student SET name = '" + student.getFirstName() + "' WHERE studentId = " + student.getUserId();
-        }else{
-            // TODO: error handle for other classes
-            throw new Exception("Class not supported");
-        }
-
-        try {
-            PreparedStatement pstmt = this.connection.prepareStatement(sql);
+    private void insertIntoMySQL(int gradeId, int studentId, int grade) throws SQLException {
+        String sql = "INSERT INTO grades (grade_id, student_id, grade) VALUES (?, ?, ?)";
+        try (PreparedStatement pstmt = this.connection.prepareStatement(sql)) {
+            pstmt.setInt(1, gradeId);
+            pstmt.setInt(2, studentId);
+            pstmt.setInt(3, grade);
             pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void delete(String sql) {
-        try {
-            PreparedStatement pstmt = this.connection.prepareStatement(sql);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            e.printStackTrace();
         }
     }
 }
