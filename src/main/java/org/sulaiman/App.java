@@ -1,18 +1,21 @@
 package org.sulaiman;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 
 public class App {
-    private DatabaseList<Subject> subjects;
-    private DatabaseList<AbstractUser> users;
-    private DatabaseList<ClassRoom> classRooms;
-    private DatabaseList<Grade> grades;
-
+    private final DatabaseList<Subject> subjects;
+    private final DatabaseList<AbstractUser> users;
+    private final DatabaseList<ClassRoom> classRooms;
+    private final DatabaseList<Grade> grades;
+    private final DatabaseManager dbManager;
+    private Connection connection;
     public App() {
         this.subjects = new DatabaseList<>();
         this.users = new DatabaseList<>();
         this.classRooms = new DatabaseList<>();
         this.grades = new DatabaseList<>();
+        this.dbManager = new DatabaseManager();
 
         // erzeuge Testdaten (hier aus Datenbank einlesen!)
         this.processData();
@@ -27,6 +30,12 @@ public class App {
     }
 
     public void processData() {
+        dbManager.syncTables();
+        try {
+            dbManager.select("SELECT * FROM users");
+        }catch (Exception e) {
+            System.out.println("Error: " + e.getMessage());
+        }
         // lege Klassenraum an
         {
             // schleife mit daten von Klassenräumen hier anlegen
