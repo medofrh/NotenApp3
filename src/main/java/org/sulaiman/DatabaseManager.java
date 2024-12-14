@@ -13,6 +13,7 @@ public class DatabaseManager {
         if (MySQLConnection.testConnection()) {
             connection = MySQLConnection.getConnection();
             isOnline = true;
+            syncTables();
         }else {
             connection = SQLiteConnection.getConnection();
             isOnline = false;
@@ -29,11 +30,18 @@ public class DatabaseManager {
         return pstmt.executeQuery();
     }
 
+    public boolean isOnline() {
+        return isOnline;
+    }
+
     public void syncTables() {
         if (!(MySQLConnection.testConnection() && SQLiteConnection.testConnection())) {
             System.out.println("Error: One or both databases are not accessible.");
             return;
         }
+
+        // Remove the SQLite database file
+        SQLiteConnection.removeDatabase();
 
         try (Connection mysqlConn = MySQLConnection.getConnection();
              Connection sqliteConn = SQLiteConnection.getConnection()) {
