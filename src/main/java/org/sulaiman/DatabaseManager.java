@@ -7,12 +7,15 @@ import java.sql.*;
 
 public class DatabaseManager {
     private static Connection connection;
+    private static boolean isOnline = false;
 
     public DatabaseManager() {
         if (MySQLConnection.testConnection()) {
             connection = MySQLConnection.getConnection();
+            isOnline = true;
         }else {
             connection = SQLiteConnection.getConnection();
+            isOnline = false;
         }
     }
 
