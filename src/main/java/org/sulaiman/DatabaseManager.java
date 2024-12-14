@@ -36,7 +36,8 @@ public class DatabaseManager {
 
     public void syncTables() {
         if (!(MySQLConnection.testConnection() && SQLiteConnection.testConnection())) {
-            System.out.println("Error: One or both databases are not accessible.");
+            System.out.println("Error: Your internet connection is not stable.");
+            System.out.println("Error: Please check your internet connection and try again.");
             return;
         }
 
@@ -55,18 +56,15 @@ public class DatabaseManager {
 
             while (tables.next()) {
                 String tableName = tables.getString("TABLE_NAME");
-                System.out.println("Cloning table: " + tableName);
 
                 // Get table creation SQL
                 String createTableSQL = getCreateTableSQL(mysqlConn, databaseName, tableName);
                 try (Statement sqliteStmt = sqliteConn.createStatement()) {
                     sqliteStmt.execute(createTableSQL); // Create table in SQLite
-                    System.out.println("Table created: " + tableName);
                 }
 
                 // Transfer data
                 transferData(mysqlConn, sqliteConn, tableName);
-                System.out.println("Data transferred for table: " + tableName);
             }
 
         } catch (SQLException e) {
