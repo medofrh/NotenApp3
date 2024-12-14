@@ -1,6 +1,36 @@
 package org.sulaiman;
 
+import java.util.Scanner;
+
 public class ConsoleUI {
+    // Start the console UI
+    public static void start() {
+        Scanner scanner = new Scanner(System.in);
+        boolean isRunning = true;
+
+        while (isRunning) {
+            displayMainMenu();
+            String choice = scanner.nextLine();
+
+            switch (choice) {
+                case "1":
+                    // Login
+                    System.out.println("Login");
+                    break;
+                case "2":
+                    // Register
+                    System.out.println("Register");
+                    break;
+                case "3":
+                    // Exit
+                    System.out.println("Exiting...");
+                    isRunning = false;
+                    break;
+                default:
+                    displayError("Invalid choice, please try again.");
+            }
+        }
+    }
     // Display the main menu
     public static void displayMainMenu() {
         System.out.println("==============Main Menu==============");
