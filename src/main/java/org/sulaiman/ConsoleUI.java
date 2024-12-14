@@ -16,6 +16,7 @@ public class ConsoleUI {
                 case "1":
                     // Login
                     System.out.println("Login");
+                    clearScreen();
                     break;
                 case "2":
                     // Register
@@ -54,5 +55,28 @@ public class ConsoleUI {
     // Display custom message
     public static void displayMessage(String message) {
         System.out.println(message);
+    }
+
+    // Clear screen
+    public static void clearScreen() {
+        String os = System.getProperty("os.name").toLowerCase();
+
+        if (os.contains("win")) {
+            try {
+                Process process = Runtime.getRuntime().exec("cls");
+                process.waitFor();
+                System.out.println("\033[H\033[2J");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            try {
+                Process process = Runtime.getRuntime().exec("clear");
+                process.waitFor();
+                System.out.print("\033[H\033[2J");
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
 }
