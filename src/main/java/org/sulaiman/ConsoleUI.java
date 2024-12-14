@@ -15,7 +15,6 @@ public class ConsoleUI {
             switch (choice) {
                 case "1":
                     // Login
-                    System.out.println("Login");
                     clearScreen();
                     break;
                 case "2":
