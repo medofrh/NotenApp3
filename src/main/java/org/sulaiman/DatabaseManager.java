@@ -34,6 +34,20 @@ public class DatabaseManager {
         return isOnline;
     }
 
+    // get the connection
+    public Connection getConnection() {
+        return connection;
+    }
+
+    // close the connection
+    public void closeConnection() {
+        try {
+            connection.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
     public void syncTables() {
         if (!(MySQLConnection.testConnection() && SQLiteConnection.testConnection())) {
             System.out.println("Error: Your internet connection is not stable.");
