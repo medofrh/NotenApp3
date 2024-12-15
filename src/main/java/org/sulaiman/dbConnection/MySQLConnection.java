@@ -4,7 +4,21 @@ import io.github.cdimascio.dotenv.Dotenv;
 
 import java.sql.*;
 public class MySQLConnection {
-    private final static Dotenv dotenv = Dotenv.load();
+//    private final static Dotenv dotenv = Dotenv.load();
+    // TODO: Dotenv should be used to load the environment variables from the .env file after building the project from the same directory
+    private final static Dotenv dotenv;
+    static {
+        Dotenv tempDotenv;
+        try {
+            tempDotenv = Dotenv.configure()
+                    .directory("./")
+                    .load();
+        }catch (Exception e) {
+            System.out.println("Error loading .env file: " + e.getMessage());
+            tempDotenv = null;
+        }
+        dotenv = tempDotenv;
+    }
     private final static String username = dotenv.get("DB_USER");
     private final static String password = dotenv.get("DB_PASS");
     private final static String host = dotenv.get("DB_HOST");
