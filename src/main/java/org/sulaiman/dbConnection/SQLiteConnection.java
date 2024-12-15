@@ -46,4 +46,20 @@ public class SQLiteConnection {
            return;
         }
     }
+
+    // check if the database file exists
+    public static boolean databaseExists() {
+        try {
+            // Extract the file path from the URL
+            String filePath = sqliteUrl.replace("jdbc:sqlite:", "");
+
+            // Create a new file object
+            File file = new File(filePath);
+
+            // Check if the file exists
+            return file.exists();
+        }catch (Exception e) {
+            return false;
+        }
+    }
 }
