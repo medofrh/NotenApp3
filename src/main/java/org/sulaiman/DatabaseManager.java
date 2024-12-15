@@ -12,10 +12,17 @@ public class DatabaseManager {
     public DatabaseManager() {
         if (MySQLConnection.testConnection()) {
             connection = MySQLConnection.getConnection();
+            System.out.println("Connected to MySQL database.");
             isOnline = true;
             syncTables();
         }else {
+            if(!SQLiteConnection.databaseExists()){
+                System.out.println("Error: SQLite database does not exist.");
+                System.out.println("Error: Please check your internet connection and try again.");
+                return;
+            }
             connection = SQLiteConnection.getConnection();
+            System.out.println("Connected to SQLite database.");
             isOnline = false;
         }
     }
