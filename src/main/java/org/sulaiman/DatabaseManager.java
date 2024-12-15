@@ -19,7 +19,7 @@ public class DatabaseManager {
             if(!SQLiteConnection.databaseExists()){
                 System.out.println("Error: SQLite database does not exist.");
                 System.out.println("Error: Please check your internet connection and try again.");
-                return;
+                throw new RuntimeException("SQLite database does not exist.");
             }
             connection = SQLiteConnection.getConnection();
             System.out.println("Connected to SQLite database.");
