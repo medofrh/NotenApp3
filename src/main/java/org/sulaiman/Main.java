@@ -8,6 +8,9 @@ public class Main {
     public static void main(String[] args) throws SQLException {
 //        new App();
         DatabaseManager dbManager = new DatabaseManager();
-        ConsoleUI.start();
+        Object user = ConsoleUI.start();
+        if (user != null) {
+            System.out.println("Welcome " + user);
+        }
     }
 }

@@ -8,7 +8,7 @@ public class ConsoleUI {
     private static boolean isRunning = true;
 
     // Start the console UI
-    public static void start() {
+    public static Object start() {
         Scanner scanner = new Scanner(System.in);
         Object user = null;
 
@@ -22,8 +22,7 @@ public class ConsoleUI {
                     clearScreen();
                     user = login(scanner);
                     if (user != null) {
-                        System.out.println("Welcome " + user);
-
+                        return user;
                     }
                     break;
                 case "2":
@@ -31,16 +30,18 @@ public class ConsoleUI {
                     System.out.println("Register");
                     clearScreen();
                     isRunning = false;
-                    break;
+                    return null;
                 case "3":
                     // Exit
                     System.out.println("Exiting...");
                     isRunning = false;
-                    break;
+                    return null;
                 default:
                     displayError("Invalid choice, please try again.");
+                    return null;
             }
         }
+        return null;
     }
 
     // Display the main menu
