@@ -8,7 +8,6 @@ abstract public class AbstractUser implements FromDataBase {
     private String password;
     private String email;
     private boolean role;
-    private oldDB dbConnection;
 
     public AbstractUser(int userId, String firstName, String lastName, String username, String password, String email, boolean role) {
         this.userId = userId;
@@ -18,7 +17,6 @@ abstract public class AbstractUser implements FromDataBase {
         this.password = password;
         this.email = email;
         this.role = role;
-        this.dbConnection = new oldDB();
     }
 
     public abstract boolean login();
