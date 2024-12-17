@@ -15,7 +15,7 @@ public class App {
         this.users = new DatabaseList<>();
         this.classRooms = new DatabaseList<>();
         this.grades = new DatabaseList<>();
-        this.dbManager = new DatabaseManager();
+        this.dbManager = DatabaseManager.getInstance();
 
         // erzeuge Testdaten (hier aus Datenbank einlesen!)
         this.processData();
