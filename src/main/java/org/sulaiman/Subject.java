@@ -15,9 +15,8 @@ public class Subject implements FromDataBase{
         this.subjectId = uid;
         this.grades = new ArrayList<>();
         this.students = new ArrayList<>();
-
-        this.changeClassRoom(classRoom);
-        this.changeTeacher(teacher);
+        this.classRoom = classRoom;
+        this.teacher = teacher;
     }
 
     public int getSubjectId() {
@@ -98,6 +97,6 @@ public class Subject implements FromDataBase{
     }
 
     public ArrayList<Student> getStudents() {
-        return students;
+        return ConsoleUI.getStudents(this);
     }
 }
