@@ -25,8 +25,17 @@ public class ConsoleUI {
                         clearScreen();
                         ArrayList<Subject> subjects = getSubjects(user);
                         if (user instanceof Student) {
-                            Subject subject = displayStudentMenu(subjects);
+                            Subject subject = displayStudentMenu(subjects, scanner);
 
+                            if (subject != null) {
+                                // get grade for the student
+                                Grade grade = getGrade((Student) user, subject);
+                                if (grade != null) {
+                                    System.out.println("Your grade for " + subject.getName() + " is: " + grade.getGradeNumber());
+                                } else {
+                                    System.out.println("You don't have a grade for " + subject.getName());
+                                }
+                            }
                         } else if (user instanceof Teacher) {
                             displayTeacherMenu();
                         }
@@ -58,17 +67,34 @@ public class ConsoleUI {
     }
 
     // Display the student menu and return the subject
-    public static Subject displayStudentMenu(ArrayList<Subject> subjects) {
-        System.out.println("==============Student Menu==============");
-        System.out.println("Subjects:");
-        for (int i = 0; i < subjects.size(); i++) {
-            System.out.println((i + 1) + ". " + subjects.get(i).getName());
+    public static Subject displayStudentMenu(ArrayList<Subject> subjects, Scanner scanner) {
+        Subject selectedSubject = null;
+
+        while (selectedSubject == null) {
+            System.out.println("==============Student Menu==============");
+            System.out.println("Subjects:");
+            for (int i = 0; i < subjects.size(); i++) {
+                System.out.println((i + 1) + ". " + subjects.get(i).getName());
+            }
+            System.out.println("=======================================");
+            System.out.println("0. Logout");
+            System.out.println("=======================================");
+            System.out.print("Enter your choice: ");
+
+            try {
+                int choice = Integer.parseInt(scanner.nextLine());
+                if (choice == 0) {
+                    return null;
+                } else if (choice > 0 && choice <= subjects.size()) {
+                    selectedSubject = subjects.get(choice - 1);
+                } else {
+                    displayError("Invalid choice, please try again.");
+                }
+            } catch (Exception e) {
+                displayError("Invalid choice, please try again.");
+            }
         }
-        System.out.println("=======================================");
-        System.out.println("0. Logout");
-        System.out.println("=======================================");
-        System.out.print("Enter your choice: ");
-        return subjects.get(Integer.parseInt(new Scanner(System.in).nextLine()) - 1);
+        return selectedSubject;
     }
 
     // Display the teacher menu
@@ -358,6 +384,30 @@ public class ConsoleUI {
                         resultSet.getString("username"),
                         resultSet.getString("password"),
                         resultSet.getString("email")
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static Grade getGrade(Student student, Subject subject) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        // read mm relations
+        String query = "SELECT * FROM grade WHERE student_id = ? AND subject_id = ?";
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
+            stmt.setInt(1, student.getUid());
+            stmt.setInt(2, subject.getSubjectId());
+            ResultSet resultSet = stmt.executeQuery();
+            while(resultSet.next()) {
+                return new Grade(
+                        resultSet.getInt("grade_id"),
+                        ConsoleUI.getStudent(resultSet.getInt("student_id")),
+                        ConsoleUI.getSubject(resultSet.getInt("subject_id")),
+                        resultSet.getDouble("grade_number")
                 );
             }
         } catch (Exception e) {
