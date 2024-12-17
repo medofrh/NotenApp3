@@ -173,7 +173,11 @@ public class ConsoleUI {
                                             while (isStudentRunning) {
                                                 System.out.println("==============" + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName() + "==============");
                                                 System.out.println("1. View Grade");
-                                                System.out.println("2. Edit Grade");
+                                                if (getGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1)) == null) {
+                                                    System.out.println("2. Set Grade");
+                                                } else {
+                                                    System.out.println("2. Edit Grade");
+                                                }
                                                 System.out.println("0. Back");
                                                 System.out.println("=======================================");
                                                 System.out.print("Enter your choice: ");
@@ -193,10 +197,18 @@ public class ConsoleUI {
                                                         // Set the grade for the student
                                                         System.out.print("Enter the grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName() + ": ");
                                                         double gradeNumber = Double.parseDouble(scanner.nextLine());
-                                                        if (setGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1), gradeNumber)) {
-                                                            displaySuccess("Grade set successfully.");
+                                                        if (getGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1)) == null) {
+                                                            if (setGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1), gradeNumber)) {
+                                                                displaySuccess("Grade set successfully.");
+                                                            } else {
+                                                                displayError("Failed to set grade.");
+                                                            }
                                                         } else {
-                                                            displayError("Failed to set grade.");
+                                                            if (updateGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1), gradeNumber)) {
+                                                                displaySuccess("Grade updated successfully.");
+                                                            } else {
+                                                                displayError("Failed to update grade.");
+                                                            }
                                                         }
                                                     } else {
                                                         displayError("Invalid choice, please try again.");
@@ -204,14 +216,6 @@ public class ConsoleUI {
                                                 } catch (Exception e) {
                                                     displayError("Invalid choice, please try again.");
                                                 }
-                                            }
-
-                                            // Get the grade for the student
-                                            Grade grade = getGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1));
-                                            if (grade != null) {
-                                                System.out.println("Grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName() + " is: " + grade.getGradeNumber());
-                                            } else {
-                                                System.out.println("No grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName());
                                             }
                                         } else {
                                             displayError("Invalid choice, please try again.");
