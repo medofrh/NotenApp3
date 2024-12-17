@@ -9,7 +9,7 @@ public class ConsoleUI {
     private static boolean isRunning = true;
 
     // Start the console UI
-    public static AbstractUser start() {
+    public static void start() {
         Scanner scanner = new Scanner(System.in);
 
         while (isRunning) {
@@ -22,7 +22,14 @@ public class ConsoleUI {
                     clearScreen();
                     AbstractUser user = login(scanner);
                     if (user != null) {
-                        return user;
+                        clearScreen();
+                        ArrayList<Subject> subjects = getSubjects(user);
+                        if (user instanceof Student) {
+                            Subject subject = displayStudentMenu(subjects);
+
+                        } else if (user instanceof Teacher) {
+                            displayTeacherMenu();
+                        }
                     }
                     break;
                 case "2":
@@ -30,18 +37,14 @@ public class ConsoleUI {
                     System.out.println("Register");
                     clearScreen();
                     isRunning = false;
-                    return null;
                 case "3":
                     // Exit
                     System.out.println("Exiting...");
                     isRunning = false;
-                    return null;
                 default:
                     displayError("Invalid choice, please try again.");
-                    return null;
             }
         }
-        return null;
     }
 
     // Display the main menu
@@ -51,6 +54,30 @@ public class ConsoleUI {
         System.out.println("2. Register");
         System.out.println("3. Exit");
         System.out.println("=====================================");
+        System.out.print("Enter your choice: ");
+    }
+
+    // Display the student menu and return the subject
+    public static Subject displayStudentMenu(ArrayList<Subject> subjects) {
+        System.out.println("==============Student Menu==============");
+        System.out.println("Subjects:");
+        for (int i = 0; i < subjects.size(); i++) {
+            System.out.println((i + 1) + ". " + subjects.get(i).getName());
+        }
+        System.out.println("=======================================");
+        System.out.println("0. Logout");
+        System.out.println("=======================================");
+        System.out.print("Enter your choice: ");
+        return subjects.get(Integer.parseInt(new Scanner(System.in).nextLine()) - 1);
+    }
+
+    // Display the teacher menu
+    public static void displayTeacherMenu() {
+        System.out.println("==============Teacher Menu==============");
+        System.out.println("1. View Subjects");
+        System.out.println("2. View Students");
+        System.out.println("3. Logout");
+        System.out.println("=======================================");
         System.out.print("Enter your choice: ");
     }
 
@@ -92,6 +119,7 @@ public class ConsoleUI {
         }
     }
 
+    // Login method
     public static AbstractUser login(Scanner scanner) {
         // Login
         clearScreen();
