@@ -24,16 +24,24 @@ public class ConsoleUI {
                     if (user != null) {
                         clearScreen();
                         ArrayList<Subject> subjects = getSubjects(user);
-                        if (user instanceof Student) {
-                            Subject subject = displayStudentMenu(subjects, scanner);
 
-                            if (subject != null) {
-                                // get grade for the student
-                                Grade grade = getGrade((Student) user, subject);
-                                if (grade != null) {
-                                    System.out.println("Your grade for " + subject.getName() + " is: " + grade.getGradeNumber());
-                                } else {
-                                    System.out.println("You don't have a grade for " + subject.getName());
+                        if (user instanceof Student) {
+                            boolean isStudentRunning = true;
+                            while (isStudentRunning){
+                                Subject subject = displayStudentMenu(subjects, scanner);
+
+                                if (subject != null) {
+                                    clearScreen();
+                                    // get grade for the student
+                                    Grade grade = getGrade((Student) user, subject);
+                                    if (grade != null) {
+                                        System.out.println("Your grade for " + subject.getName() + " is: " + grade.getGradeNumber());
+                                    } else {
+                                        System.out.println("You don't have a grade for " + subject.getName());
+                                    }
+                                }else {
+                                    clearScreen();
+                                    isStudentRunning = false;
                                 }
                             }
                         } else if (user instanceof Teacher) {
@@ -158,7 +166,9 @@ public class ConsoleUI {
             System.out.print("Enter your choice: ");
             String loginChoice = scanner.nextLine();
             if (loginChoice.equals("1")) {
+                clearScreen();
                 // Student login
+                System.out.println("==============Student Login==============");
                 System.out.print("Enter your username: ");
                 String username = scanner.nextLine();
                 System.out.print("Enter your password: ");
@@ -191,6 +201,8 @@ public class ConsoleUI {
                 }
             } else if (loginChoice.equals("2")) {
                 // Teacher login
+                clearScreen();
+                System.out.println("==============Teacher Login==============");
                 System.out.print("Enter your username: ");
                 String username = scanner.nextLine();
                 System.out.print("Enter your password: ");
