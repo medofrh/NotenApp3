@@ -113,92 +113,96 @@ public class ConsoleUI {
 
     // Display the teacher menu
     public static ClassRoom displayTeacherMenu(ArrayList<Subject> subjects, Scanner scanner) {
-        System.out.println("==============Teacher Menu==============");
-        // Get all classrooms
-        ArrayList<ClassRoom> classRooms = getClassRooms(subjects);
-        ClassRoom selectedClassRoom = null;
-        for (int i = 0; i < classRooms.size(); i++) {
-            System.out.println((i + 1) + ". " + classRooms.get(i).getName());
-        }
-        System.out.println("0. Logout");
-        System.out.println("=======================================");
-        System.out.print("Enter your choice: ");
+        boolean isRunning = true;
 
-        try {
-            int choice = Integer.parseInt(scanner.nextLine());
-            if (choice == 0) {
-                return null;
-            } else if (choice > 0 && choice <= classRooms.size()) {
-                selectedClassRoom = classRooms.get(choice - 1);
+        while (isRunning) {
+            System.out.println("==============Teacher Menu==============");
+            // Get all classrooms
+            ArrayList<ClassRoom> classRooms = getClassRooms(subjects);
+            ClassRoom selectedClassRoom = null;
+            for (int i = 0; i < classRooms.size(); i++) {
+                System.out.println((i + 1) + ". " + classRooms.get(i).getName());
+            }
+            System.out.println("0. Logout");
+            System.out.println("=======================================");
+            System.out.print("Enter your choice: ");
 
-                // Get all subjects in the class
-                ArrayList<Subject> classSubjects = getSubjects(selectedClassRoom);
-                boolean isClassRunning = true;
-                while (isClassRunning) {
-                    System.out.println("==============" + selectedClassRoom.getName() + "==============");
+            try {
+                int choice = Integer.parseInt(scanner.nextLine());
+                if (choice == 0) {
+                    isRunning = false;
+                } else if (choice > 0 && choice <= classRooms.size()) {
+                    selectedClassRoom = classRooms.get(choice - 1);
+
+                    // Get all subjects in the class
+                    ArrayList<Subject> classSubjects = getSubjects(selectedClassRoom);
+                    boolean isClassRunning = true;
+                    while (isClassRunning) {
+                        System.out.println("==============" + selectedClassRoom.getName() + "==============");
+                        for (int i = 0; i < classSubjects.size(); i++) {
+                            System.out.println((i + 1) + ". " + classSubjects.get(i).getName());
+                        }
+                        System.out.println("0. Back");
+                        System.out.println("=======================================");
+                        System.out.print("Enter your choice: ");
+
+                        try {
+                            int classChoice = Integer.parseInt(scanner.nextLine());
+                            if (classChoice == 0) {
+                                isClassRunning = false;
+                            } else if (classChoice > 0 && classChoice <= classSubjects.size()) {
+                                // Get all students in the class
+                                ArrayList<Student> students = getStudents(classSubjects.get(classChoice - 1));
+                                boolean isSubjectRunning = true;
+                                while (isSubjectRunning) {
+                                    System.out.println("==============" + classSubjects.get(classChoice - 1).getName() + "==============");
+                                    for (int i = 0; i < students.size(); i++) {
+                                        System.out.println((i + 1) + ". " + students.get(i).getFirstName() + " " + students.get(i).getLastName());
+                                    }
+                                    System.out.println("0. Back");
+                                    System.out.println("=======================================");
+                                    System.out.print("Enter your choice: ");
+                                    try {
+                                        int studentChoice = Integer.parseInt(scanner.nextLine());
+                                        if (studentChoice == 0) {
+                                            isSubjectRunning = false;
+                                        } else if (studentChoice > 0 && studentChoice <= students.size()) {
+                                            // Get the grade for the student
+                                            Grade grade = getGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1));
+                                            if (grade != null) {
+                                                System.out.println("Grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName() + " is: " + grade.getGradeNumber());
+                                            } else {
+                                                System.out.println("No grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName());
+                                            }
+                                        } else {
+                                            displayError("Invalid choice, please try again.");
+                                        }
+                                    } catch (Exception e) {
+                                        displayError("Invalid choice, please try again.");
+                                    }
+                                }
+                            } else {
+                                displayError("Invalid choice, please try again.");
+                            }
+                        } catch (Exception e) {
+                            displayError("Invalid choice, please try again.");
+                        }
+                    }
+
                     for (int i = 0; i < classSubjects.size(); i++) {
                         System.out.println((i + 1) + ". " + classSubjects.get(i).getName());
                     }
                     System.out.println("0. Back");
-                    System.out.println("=======================================");
-                    System.out.print("Enter your choice: ");
 
-                    try {
-                        int classChoice = Integer.parseInt(scanner.nextLine());
-                        if (classChoice == 0) {
-                            return null;
-                        } else if (classChoice > 0 && classChoice <= classSubjects.size()) {
-                            // Get all students in the class
-                            ArrayList<Student> students = getStudents(classSubjects.get(classChoice - 1));
-                            boolean isSubjectRunning = true;
-                            while (isSubjectRunning) {
-                                System.out.println("==============" + classSubjects.get(classChoice - 1).getName() + "==============");
-                                for (int i = 0; i < students.size(); i++) {
-                                    System.out.println((i + 1) + ". " + students.get(i).getFirstName() + " " + students.get(i).getLastName());
-                                }
-                                System.out.println("0. Back");
-                                System.out.println("=======================================");
-                                System.out.print("Enter your choice: ");
-                                try {
-                                    int studentChoice = Integer.parseInt(scanner.nextLine());
-                                    if (studentChoice == 0) {
-                                        isSubjectRunning = false;
-                                    } else if (studentChoice > 0 && studentChoice <= students.size()) {
-                                        // Get the grade for the student
-                                        Grade grade = getGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1));
-                                        if (grade != null) {
-                                            System.out.println("Grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName() + " is: " + grade.getGradeNumber());
-                                        } else {
-                                            System.out.println("No grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName());
-                                        }
-                                    } else {
-                                        displayError("Invalid choice, please try again.");
-                                    }
-                                } catch (Exception e) {
-                                    displayError("Invalid choice, please try again.");
-                                }
-                            }
-                        } else {
-                            displayError("Invalid choice, please try again.");
-                        }
-                    } catch (Exception e) {
-                        displayError("Invalid choice, please try again.");
-                    }
+                    // Get all students in the class
+
+
+                } else {
+                    displayError("Invalid choice, please try again.");
                 }
-
-                for (int i = 0; i < classSubjects.size(); i++) {
-                    System.out.println((i + 1) + ". " + classSubjects.get(i).getName());
-                }
-                System.out.println("0. Back");
-
-                // Get all students in the class
-
-
-            } else {
+            } catch (Exception e) {
                 displayError("Invalid choice, please try again.");
             }
-        } catch (Exception e) {
-            displayError("Invalid choice, please try again.");
         }
         return null;
     }
