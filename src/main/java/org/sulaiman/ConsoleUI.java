@@ -65,8 +65,6 @@ public class ConsoleUI {
                     // Exit
                     System.out.println("Exiting...");
                     isRunning = false;
-                default:
-                    displayError("Invalid choice, please try again.");
             }
         }
     }
@@ -137,6 +135,7 @@ public class ConsoleUI {
                     // Get all subjects in the class
                     ArrayList<Subject> classSubjects = getSubjects(selectedClassRoom);
                     boolean isClassRunning = true;
+                    clearScreen();
                     while (isClassRunning) {
                         System.out.println("==============" + selectedClassRoom.getName() + "==============");
                         for (int i = 0; i < classSubjects.size(); i++) {
@@ -154,6 +153,7 @@ public class ConsoleUI {
                                 // Get all students in the class
                                 ArrayList<Student> students = getStudents(classSubjects.get(classChoice - 1));
                                 boolean isSubjectRunning = true;
+                                clearScreen();
                                 while (isSubjectRunning) {
                                     System.out.println("==============" + classSubjects.get(classChoice - 1).getName() + "==============");
                                     for (int i = 0; i < students.size(); i++) {
@@ -169,7 +169,7 @@ public class ConsoleUI {
                                         } else if (studentChoice > 0 && studentChoice <= students.size()) {
                                             // check choice for view or edit
                                             boolean isStudentRunning = true;
-
+                                            clearScreen();
                                             while (isStudentRunning) {
                                                 System.out.println("==============" + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName() + "==============");
                                                 System.out.println("1. View Grade");
@@ -200,6 +200,7 @@ public class ConsoleUI {
                                                         if (getGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1)) == null) {
                                                             if (setGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1), gradeNumber)) {
                                                                 displaySuccess("Grade set successfully.");
+                                                                isStudentRunning = false;
                                                             } else {
                                                                 displayError("Failed to set grade.");
                                                             }
@@ -599,6 +600,24 @@ public class ConsoleUI {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public static boolean setStudent(Student student, ClassRoom classRoom) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        // read mm relations
+        String query = "insert into student_classroom (student_id, classroom_id) values (?, ?)";
+
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
+            stmt.setInt(1, student.getUid());
+            stmt.setInt(2, classRoom.getClassRoomId());
+            stmt.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 
     public static Grade getGrade(Student student, Subject subject) {
