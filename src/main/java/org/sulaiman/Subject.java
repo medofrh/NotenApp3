@@ -66,6 +66,10 @@ public class Subject implements FromDataBase{
         this.classRoom.addSubject(this);
     }
 
+    public Teacher getTeacher() {
+        return teacher;
+    }
+
     public void changeTeacher(Teacher teacher) {
         if(this.teacher != null)
             this.teacher.removeSubject(this);
