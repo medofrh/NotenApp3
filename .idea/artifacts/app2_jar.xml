@@ -5,12 +5,10 @@
       <element id="archive" name="app2.jar">
         <element id="module-output" name="app2" />
       </element>
-      <element id="directory" name="lib">
-        <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.21.9" />
-        <element id="library" level="project" name="Maven: com.mysql:mysql-connector-j:8.0.33" />
-        <element id="library" level="project" name="Maven: io.github.cdimascio:dotenv-java:3.0.0" />
-        <element id="library" level="project" name="Maven: org.xerial:sqlite-jdbc:3.47.1.0" />
-      </element>
+      <element id="library" level="project" name="Maven: com.google.protobuf:protobuf-java:3.21.9" />
+      <element id="library" level="project" name="Maven: com.mysql:mysql-connector-j:8.0.33" />
+      <element id="library" level="project" name="Maven: io.github.cdimascio:dotenv-java:3.0.0" />
+      <element id="library" level="project" name="Maven: org.xerial:sqlite-jdbc:3.47.1.0" />
     </root>
   </artifact>
 </component>
