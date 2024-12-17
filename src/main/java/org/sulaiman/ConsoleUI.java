@@ -479,13 +479,13 @@ public class ConsoleUI {
         DatabaseManager dbManager = DatabaseManager.getInstance();
 
         // read mm relations
-        String query = "insert into subject (name, classroom_id, teacher_id) values (?, ?, ?)";
+        String query = "insert into subject (name, teacher_id, classroom_id) values (?, ?, ?)";
 
         try {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
             stmt.setString(1, subject.getName());
-            stmt.setInt(2, classRoom.getClassRoomId());
-            stmt.setInt(3, teacher.getUid());
+            stmt.setInt(2, teacher.getUid());
+            stmt.setInt(3, classRoom.getClassRoomId());
             stmt.executeUpdate();
             return true;
         } catch (Exception e) {
