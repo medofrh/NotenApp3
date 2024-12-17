@@ -23,10 +23,11 @@ public class ConsoleUI {
                     AbstractUser user = login(scanner);
                     if (user != null) {
                         clearScreen();
-                        ArrayList<Subject> subjects = getSubjects(user);
+                        displaySuccess("Welcome " + user.getFirstName() + " " + user.getLastName());
 
                         if (user instanceof Student) {
                             boolean isStudentRunning = true;
+                            ArrayList<Subject> subjects = getSubjects(user);
                             while (isStudentRunning){
                                 Subject subject = displayStudentMenu(subjects, scanner);
 
@@ -45,16 +46,22 @@ public class ConsoleUI {
                                 }
                             }
                         } else if (user instanceof Teacher) {
-                            displayTeacherMenu();
+                            boolean isTeacherRunning = true;
+                            ArrayList<Subject> subjects = getSubjects(user);
+                            while (isTeacherRunning) {
+                                ClassRoom classRoom = displayTeacherMenu(subjects, scanner);
+                                if (classRoom != null) {
+                                    clearScreen();
+
+                                } else {
+                                    clearScreen();
+                                    isTeacherRunning = false;
+                                }
+                            }
                         }
                     }
                     break;
                 case "2":
-                    // Register
-                    System.out.println("Register");
-                    clearScreen();
-                    isRunning = false;
-                case "3":
                     // Exit
                     System.out.println("Exiting...");
                     isRunning = false;
@@ -68,8 +75,7 @@ public class ConsoleUI {
     public static void displayMainMenu() {
         System.out.println("==============Main Menu==============");
         System.out.println("1. Login");
-        System.out.println("2. Register");
-        System.out.println("3. Exit");
+        System.out.println("2. Exit");
         System.out.println("=====================================");
         System.out.print("Enter your choice: ");
     }
@@ -106,13 +112,95 @@ public class ConsoleUI {
     }
 
     // Display the teacher menu
-    public static void displayTeacherMenu() {
+    public static ClassRoom displayTeacherMenu(ArrayList<Subject> subjects, Scanner scanner) {
         System.out.println("==============Teacher Menu==============");
-        System.out.println("1. View Subjects");
-        System.out.println("2. View Students");
-        System.out.println("3. Logout");
+        // Get all classrooms
+        ArrayList<ClassRoom> classRooms = getClassRooms(subjects);
+        ClassRoom selectedClassRoom = null;
+        for (int i = 0; i < classRooms.size(); i++) {
+            System.out.println((i + 1) + ". " + classRooms.get(i).getName());
+        }
+        System.out.println("0. Logout");
         System.out.println("=======================================");
         System.out.print("Enter your choice: ");
+
+        try {
+            int choice = Integer.parseInt(scanner.nextLine());
+            if (choice == 0) {
+                return null;
+            } else if (choice > 0 && choice <= classRooms.size()) {
+                selectedClassRoom = classRooms.get(choice - 1);
+
+                // Get all subjects in the class
+                ArrayList<Subject> classSubjects = getSubjects(selectedClassRoom);
+                boolean isClassRunning = true;
+                while (isClassRunning) {
+                    System.out.println("==============" + selectedClassRoom.getName() + "==============");
+                    for (int i = 0; i < classSubjects.size(); i++) {
+                        System.out.println((i + 1) + ". " + classSubjects.get(i).getName());
+                    }
+                    System.out.println("0. Back");
+                    System.out.println("=======================================");
+                    System.out.print("Enter your choice: ");
+
+                    try {
+                        int classChoice = Integer.parseInt(scanner.nextLine());
+                        if (classChoice == 0) {
+                            return null;
+                        } else if (classChoice > 0 && classChoice <= classSubjects.size()) {
+                            // Get all students in the class
+                            ArrayList<Student> students = getStudents(classSubjects.get(classChoice - 1));
+                            boolean isSubjectRunning = true;
+                            while (isSubjectRunning) {
+                                System.out.println("==============" + classSubjects.get(classChoice - 1).getName() + "==============");
+                                for (int i = 0; i < students.size(); i++) {
+                                    System.out.println((i + 1) + ". " + students.get(i).getFirstName() + " " + students.get(i).getLastName());
+                                }
+                                System.out.println("0. Back");
+                                System.out.println("=======================================");
+                                System.out.print("Enter your choice: ");
+                                try {
+                                    int studentChoice = Integer.parseInt(scanner.nextLine());
+                                    if (studentChoice == 0) {
+                                        isSubjectRunning = false;
+                                    } else if (studentChoice > 0 && studentChoice <= students.size()) {
+                                        // Get the grade for the student
+                                        Grade grade = getGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1));
+                                        if (grade != null) {
+                                            System.out.println("Grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName() + " is: " + grade.getGradeNumber());
+                                        } else {
+                                            System.out.println("No grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName());
+                                        }
+                                    } else {
+                                        displayError("Invalid choice, please try again.");
+                                    }
+                                } catch (Exception e) {
+                                    displayError("Invalid choice, please try again.");
+                                }
+                            }
+                        } else {
+                            displayError("Invalid choice, please try again.");
+                        }
+                    } catch (Exception e) {
+                        displayError("Invalid choice, please try again.");
+                    }
+                }
+
+                for (int i = 0; i < classSubjects.size(); i++) {
+                    System.out.println((i + 1) + ". " + classSubjects.get(i).getName());
+                }
+                System.out.println("0. Back");
+
+                // Get all students in the class
+
+
+            } else {
+                displayError("Invalid choice, please try again.");
+            }
+        } catch (Exception e) {
+            displayError("Invalid choice, please try again.");
+        }
+        return null;
     }
 
     // Display error message
@@ -291,6 +379,31 @@ public class ConsoleUI {
         return subjects;
     }
 
+    public static ArrayList<Subject> getSubjects(ClassRoom classRoom){
+        ArrayList<Subject> subjects = new ArrayList<>();
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        // read mm relations
+        String query = "SELECT * FROM subject WHERE classroom_id = ?";
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
+            stmt.setInt(1, classRoom.getClassRoomId());
+            ResultSet resultSet = stmt.executeQuery();
+            while(resultSet.next()) {
+                subjects.add(new Subject(
+                        resultSet.getInt("subject_id"),
+                        resultSet.getString("name"),
+                        classRoom,
+                        ConsoleUI.getTeacher(resultSet.getInt("teacher_id"))
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return subjects;
+    }
+
     public static Subject getSubject(int subjectId) {
         DatabaseManager dbManager = DatabaseManager.getInstance();
 
@@ -358,6 +471,41 @@ public class ConsoleUI {
             e.printStackTrace();
         }
         return null;
+    }
+    public static ArrayList<ClassRoom> getClassRooms(ArrayList<Subject> subjects) {
+        ArrayList<ClassRoom> classRooms = new ArrayList<>();
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        if (subjects.isEmpty()) {
+            return classRooms;
+        }
+
+        // read mm relations
+        StringBuilder queryBuilder = new StringBuilder("SELECT * FROM classroom WHERE classroom_id IN (");
+        for (int i = 0; i < subjects.size(); i++) {
+            queryBuilder.append("?");
+            if (i != subjects.size() - 1) {
+                queryBuilder.append(",");
+            }
+        }
+        queryBuilder.append(")");
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(queryBuilder.toString());
+
+            for (int i = 0; i < subjects.size(); i++) {
+                stmt.setInt(i + 1, subjects.get(i).getClassRoom().getClassRoomId());
+            }
+            ResultSet resultSet = stmt.executeQuery();
+            while(resultSet.next()) {
+                classRooms.add(new ClassRoom(
+                        resultSet.getInt("classroom_id"),
+                        resultSet.getString("name")
+                ));
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return classRooms;
     }
 
     public static ArrayList<Student> getStudents(Subject subject) {
