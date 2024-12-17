@@ -28,7 +28,7 @@ public class ConsoleUI {
                         if (user instanceof Student) {
                             boolean isStudentRunning = true;
                             ArrayList<Subject> subjects = getSubjects(user);
-                            while (isStudentRunning){
+                            while (isStudentRunning) {
                                 Subject subject = displayStudentMenu(subjects, scanner);
 
                                 if (subject != null) {
@@ -40,7 +40,7 @@ public class ConsoleUI {
                                     } else {
                                         System.out.println("You don't have a grade for " + subject.getName());
                                     }
-                                }else {
+                                } else {
                                     clearScreen();
                                     isStudentRunning = false;
                                 }
@@ -167,6 +167,45 @@ public class ConsoleUI {
                                         if (studentChoice == 0) {
                                             isSubjectRunning = false;
                                         } else if (studentChoice > 0 && studentChoice <= students.size()) {
+                                            // check choice for view or edit
+                                            boolean isStudentRunning = true;
+
+                                            while (isStudentRunning) {
+                                                System.out.println("==============" + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName() + "==============");
+                                                System.out.println("1. View Grade");
+                                                System.out.println("2. Edit Grade");
+                                                System.out.println("0. Back");
+                                                System.out.println("=======================================");
+                                                System.out.print("Enter your choice: ");
+                                                int studentChoice2 = Integer.parseInt(scanner.nextLine());
+                                                try {
+                                                    if (studentChoice2 == 0) {
+                                                        isStudentRunning = false;
+                                                    } else if (studentChoice2 == 1) {
+                                                        // Get the grade for the student
+                                                        Grade grade = getGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1));
+                                                        if (grade != null) {
+                                                            System.out.println("Grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName() + " is: " + grade.getGradeNumber());
+                                                        } else {
+                                                            System.out.println("No grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName());
+                                                        }
+                                                    } else if (studentChoice2 == 2) {
+                                                        // Set the grade for the student
+                                                        System.out.print("Enter the grade for " + students.get(studentChoice - 1).getFirstName() + " " + students.get(studentChoice - 1).getLastName() + ": ");
+                                                        double gradeNumber = Double.parseDouble(scanner.nextLine());
+                                                        if (setGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1), gradeNumber)) {
+                                                            displaySuccess("Grade set successfully.");
+                                                        } else {
+                                                            displayError("Failed to set grade.");
+                                                        }
+                                                    } else {
+                                                        displayError("Invalid choice, please try again.");
+                                                    }
+                                                } catch (Exception e) {
+                                                    displayError("Invalid choice, please try again.");
+                                                }
+                                            }
+
                                             // Get the grade for the student
                                             Grade grade = getGrade(students.get(studentChoice - 1), classSubjects.get(classChoice - 1));
                                             if (grade != null) {
@@ -353,7 +392,7 @@ public class ConsoleUI {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
             stmt.setInt(1, student.getUid());
             ResultSet resultSet = stmt.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 subjects.add(ConsoleUI.getSubject(resultSet.getInt("subject_id")));
             }
         } catch (Exception e) {
@@ -373,7 +412,7 @@ public class ConsoleUI {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
             stmt.setInt(1, teacher.getUid());
             ResultSet resultSet = stmt.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 subjects.add(ConsoleUI.getSubject(resultSet.getInt("subject_id")));
             }
         } catch (Exception e) {
@@ -383,7 +422,7 @@ public class ConsoleUI {
         return subjects;
     }
 
-    public static ArrayList<Subject> getSubjects(ClassRoom classRoom){
+    public static ArrayList<Subject> getSubjects(ClassRoom classRoom) {
         ArrayList<Subject> subjects = new ArrayList<>();
         DatabaseManager dbManager = DatabaseManager.getInstance();
 
@@ -393,7 +432,7 @@ public class ConsoleUI {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
             stmt.setInt(1, classRoom.getClassRoomId());
             ResultSet resultSet = stmt.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 subjects.add(new Subject(
                         resultSet.getInt("subject_id"),
                         resultSet.getString("name"),
@@ -417,7 +456,7 @@ public class ConsoleUI {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
             stmt.setInt(1, subjectId);
             ResultSet resultSet = stmt.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 return new Subject(
                         resultSet.getInt("subject_id"),
                         resultSet.getString("name"),
@@ -440,7 +479,7 @@ public class ConsoleUI {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
             stmt.setInt(1, teacherId);
             ResultSet resultSet = stmt.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 return new Teacher(
                         resultSet.getInt("teacher_id"),
                         resultSet.getString("first_name"),
@@ -465,7 +504,7 @@ public class ConsoleUI {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
             stmt.setInt(1, classRoomId);
             ResultSet resultSet = stmt.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 return new ClassRoom(
                         resultSet.getInt("classroom_id"),
                         resultSet.getString("name")
@@ -476,6 +515,7 @@ public class ConsoleUI {
         }
         return null;
     }
+
     public static ArrayList<ClassRoom> getClassRooms(ArrayList<Subject> subjects) {
         ArrayList<ClassRoom> classRooms = new ArrayList<>();
         DatabaseManager dbManager = DatabaseManager.getInstance();
@@ -500,7 +540,7 @@ public class ConsoleUI {
                 stmt.setInt(i + 1, subjects.get(i).getClassRoom().getClassRoomId());
             }
             ResultSet resultSet = stmt.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 classRooms.add(new ClassRoom(
                         resultSet.getInt("classroom_id"),
                         resultSet.getString("name")
@@ -531,6 +571,7 @@ public class ConsoleUI {
         }
         return null;
     }
+
     public static Student getStudent(int studentId) {
         DatabaseManager dbManager = DatabaseManager.getInstance();
 
@@ -540,7 +581,7 @@ public class ConsoleUI {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
             stmt.setInt(1, studentId);
             ResultSet resultSet = stmt.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 return new Student(
                         resultSet.getInt("student_id"),
                         resultSet.getString("first_name"),
@@ -566,7 +607,7 @@ public class ConsoleUI {
             stmt.setInt(1, student.getUid());
             stmt.setInt(2, subject.getSubjectId());
             ResultSet resultSet = stmt.executeQuery();
-            while(resultSet.next()) {
+            while (resultSet.next()) {
                 return new Grade(
                         resultSet.getInt("grade_id"),
                         ConsoleUI.getStudent(resultSet.getInt("student_id")),
@@ -579,4 +620,24 @@ public class ConsoleUI {
         }
         return null;
     }
+
+    public static boolean setGrade(Student student, Subject subject, double gradeNumber) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        // read mm relations
+        String query = "insert into grade (student_id, subject_id, grade_number) values (?, ?, ?)";
+
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
+            stmt.setInt(1, student.getUid());
+            stmt.setInt(2, subject.getSubjectId());
+            stmt.setDouble(3, gradeNumber);
+            stmt.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+    
 }
