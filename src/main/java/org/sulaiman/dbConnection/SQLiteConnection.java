@@ -5,7 +5,7 @@ import java.io.File;
 public class SQLiteConnection {
 //    static final String sqliteUrl = "jdbc:sqlite:local.db";
     // set database in resources in database folder
-    private static final String sqliteUrl = "jdbc:sqlite:src/main/resources/localDatabase/local.db";
+    private static final String sqliteUrl = "jdbc:sqlite:local.db";
     public static Connection getConnection() {
         try {
             // save sqlite database in resources in database folder

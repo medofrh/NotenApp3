@@ -6,7 +6,7 @@ import org.sulaiman.dbConnection.SQLiteConnection;
 import java.sql.*;
 
 public class DatabaseManager {
-    private final Connection connection;
+    private Connection connection;
 
     private static DatabaseManager instance = null;
 
@@ -24,16 +24,19 @@ public class DatabaseManager {
     private DatabaseManager() {
         if (MySQLConnection.testConnection()) {
             connection = MySQLConnection.getConnection();
-            System.out.println("Connected to MySQL database.");
+            SQLiteConnection.removeDatabase();
+            SQLiteConnection.testConnection();
             syncTables();
         } else {
             if(!SQLiteConnection.databaseExists()){
                 System.out.println("Error: SQLite database does not exist.");
                 System.out.println("Error: Please check your internet connection and try again.");
-                throw new RuntimeException("SQLite database does not exist.");
+                System.exit(0);
+            }else{
+                connection = SQLiteConnection.getConnection();
+                System.out.println("Connected to SQLite database.");
             }
-            connection = SQLiteConnection.getConnection();
-            System.out.println("Connected to SQLite database.");
+            connection = null;
         }
     }
 
