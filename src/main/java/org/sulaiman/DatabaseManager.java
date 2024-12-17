@@ -6,16 +6,27 @@ import org.sulaiman.dbConnection.SQLiteConnection;
 import java.sql.*;
 
 public class DatabaseManager {
-    private static Connection connection;
-    private static boolean isOnline = false;
+    private final Connection connection;
 
-    public DatabaseManager() {
+    private static DatabaseManager instance = null;
+
+    /**
+     * Singleton pattern
+     * @return Returns one DatabaseManager object
+     */
+    public static DatabaseManager getInstance() {
+        if (instance == null) {
+            instance = new DatabaseManager();
+        }
+        return instance;
+    }
+
+    private DatabaseManager() {
         if (MySQLConnection.testConnection()) {
             connection = MySQLConnection.getConnection();
             System.out.println("Connected to MySQL database.");
-            isOnline = true;
             syncTables();
-        }else {
+        } else {
             if(!SQLiteConnection.databaseExists()){
                 System.out.println("Error: SQLite database does not exist.");
                 System.out.println("Error: Please check your internet connection and try again.");
@@ -23,7 +34,6 @@ public class DatabaseManager {
             }
             connection = SQLiteConnection.getConnection();
             System.out.println("Connected to SQLite database.");
-            isOnline = false;
         }
     }
 
@@ -38,7 +48,7 @@ public class DatabaseManager {
     }
 
     public boolean isOnline() {
-        return isOnline;
+        return this.connection instanceof MySQLConnection;
     }
 
     // get the connection
