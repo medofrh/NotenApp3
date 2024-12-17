@@ -1,3 +1,5 @@
 Manifest-Version: 1.0
 Main-Class: org.sulaiman.Main
+Class-Path: dotenv-java-3.0.0.jar protobuf-java-3.21.9.jar sqlite-jdbc-3
+ .47.1.0.jar mysql-connector-j-8.0.33.jar
 
