@@ -114,12 +114,13 @@ public class ConsoleUI {
 
         while (isRunning) {
             System.out.println("==============Teacher Menu==============");
-            System.out.println("1. Add Classroom");
+            // TODO: press c to cancel
+            System.out.println("-1. Add Classroom");
             // Get all classrooms
             ArrayList<ClassRoom> classRooms = getClassRooms(subjects);
             ClassRoom selectedClassRoom = null;
             for (int i = 0; i < classRooms.size(); i++) {
-                System.out.println((i + 2) + ". " + classRooms.get(i).getName());
+                System.out.println((i + 1) + ". " + classRooms.get(i).getName());
             }
             System.out.println("0. Logout");
             System.out.println("=======================================");
@@ -129,7 +130,7 @@ public class ConsoleUI {
                 int choice = Integer.parseInt(scanner.nextLine());
                 if (choice == 0) {
                     isRunning = false;
-                } else if (choice == 1) {
+                } else if (choice == -1) {
                     // Add classroom
                     System.out.print("Enter the name of the classroom: ");
                     String className = scanner.nextLine();
@@ -148,8 +149,8 @@ public class ConsoleUI {
                     // update the classRooms
                     classRooms = getClassRooms(getSubjects(teacher));
                     subjects = getSubjects(teacher);
-                } else if (choice > 1 && choice <= classRooms.size() + 1) {
-                    selectedClassRoom = classRooms.get(choice - 2);
+                } else if (choice > 0 && choice <= classRooms.size() + 1) {
+                    selectedClassRoom = classRooms.get(choice - 1);
 
                     // Get all subjects in the class
                     ArrayList<Subject> classSubjects = getSubjects(selectedClassRoom);
@@ -175,8 +176,8 @@ public class ConsoleUI {
                                 clearScreen();
                                 while (isSubjectRunning) {
                                     System.out.println("==============" + classSubjects.get(classChoice - 1).getName() + "==============");
-                                    System.out.println("1. Add Student");
-                                    for (int i = 1; i < students.size(); i++) {
+                                    System.out.println("-1. Add Student");
+                                    for (int i = 0; i < students.size(); i++) {
                                         System.out.println((i + 1) + ". " + students.get(i).getFirstName() + " " + students.get(i).getLastName());
                                     }
                                     System.out.println("0. Back");
@@ -186,8 +187,8 @@ public class ConsoleUI {
                                         int studentChoice = Integer.parseInt(scanner.nextLine());
                                         if (studentChoice == 0) {
                                             isSubjectRunning = false;
-                                        } else if (studentChoice == 1){
-                                            System.out.println("Is the student already in the system? (y/n)");
+                                        } else if (studentChoice == -1){
+                                            System.out.print("Is the student already in the system? (y/n):");
                                             String isStudentInSystem = scanner.nextLine();
                                             if (isStudentInSystem.equals("y")) {
                                                 System.out.print("Enter the student's username: ");
@@ -196,6 +197,9 @@ public class ConsoleUI {
                                                 if (student != null) {
                                                     updateStudent(student, classSubjects, selectedClassRoom);
                                                     displaySuccess("Student added successfully.");
+
+                                                    // update the students
+                                                    students = getStudents(classSubjects.get(classChoice - 1));
                                                 } else {
                                                     displayError("Student not found.");
                                                 }
@@ -216,6 +220,7 @@ public class ConsoleUI {
                                                 } else {
                                                     displayError("Failed to add student.");
                                                 }
+                                                students = getStudents(classSubjects.get(classChoice - 1));
                                             }
                                         }else if (studentChoice > 0 && studentChoice <= students.size()) {
                                             // check choice for view or edit
