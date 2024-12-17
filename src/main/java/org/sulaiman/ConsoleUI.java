@@ -475,6 +475,25 @@ public class ConsoleUI {
         return null;
     }
 
+    public static boolean setSubject(Subject subject, ClassRoom classRoom, Teacher teacher) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        // read mm relations
+        String query = "insert into subject (name, classroom_id, teacher_id) values (?, ?, ?)";
+
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
+            stmt.setString(1, subject.getName());
+            stmt.setInt(2, classRoom.getClassRoomId());
+            stmt.setInt(3, teacher.getUid());
+            stmt.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
     public static Teacher getTeacher(int teacherId) {
         DatabaseManager dbManager = DatabaseManager.getInstance();
 
