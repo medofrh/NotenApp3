@@ -49,10 +49,9 @@ public class ConsoleUI {
                             boolean isTeacherRunning = true;
                             ArrayList<Subject> subjects = getSubjects(user);
                             while (isTeacherRunning) {
-                                ClassRoom classRoom = displayTeacherMenu(subjects, scanner);
+                                ClassRoom classRoom = displayTeacherMenu(subjects, scanner, (Teacher) user);
                                 if (classRoom != null) {
                                     clearScreen();
-
                                 } else {
                                     clearScreen();
                                     isTeacherRunning = false;
@@ -110,16 +109,17 @@ public class ConsoleUI {
     }
 
     // Display the teacher menu
-    public static ClassRoom displayTeacherMenu(ArrayList<Subject> subjects, Scanner scanner) {
+    public static ClassRoom displayTeacherMenu(ArrayList<Subject> subjects, Scanner scanner, Teacher teacher) {
         boolean isRunning = true;
 
         while (isRunning) {
             System.out.println("==============Teacher Menu==============");
+            System.out.println("1. Add Classroom");
             // Get all classrooms
             ArrayList<ClassRoom> classRooms = getClassRooms(subjects);
             ClassRoom selectedClassRoom = null;
             for (int i = 0; i < classRooms.size(); i++) {
-                System.out.println((i + 1) + ". " + classRooms.get(i).getName());
+                System.out.println((i + 2) + ". " + classRooms.get(i).getName());
             }
             System.out.println("0. Logout");
             System.out.println("=======================================");
@@ -129,8 +129,27 @@ public class ConsoleUI {
                 int choice = Integer.parseInt(scanner.nextLine());
                 if (choice == 0) {
                     isRunning = false;
-                } else if (choice > 0 && choice <= classRooms.size()) {
-                    selectedClassRoom = classRooms.get(choice - 1);
+                } else if (choice == 1) {
+                    // Add classroom
+                    System.out.print("Enter the name of the classroom: ");
+                    String className = scanner.nextLine();
+                    ClassRoom newClassRoom = setClassRoom(new ClassRoom(0, className));
+                    boolean isAddingSubject = true;
+                    System.out.println("Enter 0 to stop adding subjects.");
+                    while (isAddingSubject){
+                        System.out.println("Enter the name of the subject: ");
+                        String subjectName = scanner.nextLine();
+                        if (subjectName.equals("0")){
+                            isAddingSubject = false;
+                        }else {
+                            setSubject(new Subject(0, subjectName, newClassRoom, teacher));
+                        }
+                    }
+                    // update the classRooms
+                    classRooms = getClassRooms(getSubjects(teacher));
+                    subjects = getSubjects(teacher);
+                } else if (choice > 1 && choice <= classRooms.size() + 1) {
+                    selectedClassRoom = classRooms.get(choice - 2);
 
                     // Get all subjects in the class
                     ArrayList<Subject> classSubjects = getSubjects(selectedClassRoom);
@@ -156,7 +175,8 @@ public class ConsoleUI {
                                 clearScreen();
                                 while (isSubjectRunning) {
                                     System.out.println("==============" + classSubjects.get(classChoice - 1).getName() + "==============");
-                                    for (int i = 0; i < students.size(); i++) {
+                                    System.out.println("1. Add Student");
+                                    for (int i = 1; i < students.size(); i++) {
                                         System.out.println((i + 1) + ". " + students.get(i).getFirstName() + " " + students.get(i).getLastName());
                                     }
                                     System.out.println("0. Back");
@@ -166,7 +186,38 @@ public class ConsoleUI {
                                         int studentChoice = Integer.parseInt(scanner.nextLine());
                                         if (studentChoice == 0) {
                                             isSubjectRunning = false;
-                                        } else if (studentChoice > 0 && studentChoice <= students.size()) {
+                                        } else if (studentChoice == 1){
+                                            System.out.println("Is the student already in the system? (y/n)");
+                                            String isStudentInSystem = scanner.nextLine();
+                                            if (isStudentInSystem.equals("y")) {
+                                                System.out.print("Enter the student's username: ");
+                                                String username = scanner.nextLine();
+                                                Student student = getStudent(username);
+                                                if (student != null) {
+                                                    updateStudent(student, classSubjects, selectedClassRoom);
+                                                    displaySuccess("Student added successfully.");
+                                                } else {
+                                                    displayError("Student not found.");
+                                                }
+                                            }else {
+                                                System.out.print("Enter the student's first name: ");
+                                                String firstName = scanner.nextLine();
+                                                System.out.print("Enter the student's last name: ");
+                                                String lastName = scanner.nextLine();
+                                                System.out.print("Enter the student's username: ");
+                                                String username = scanner.nextLine();
+                                                System.out.print("Enter the student's password: ");
+                                                String password = scanner.nextLine();
+                                                System.out.print("Enter the student's email: ");
+                                                String email = scanner.nextLine();
+                                                Student student = new Student(0, firstName, lastName, username, password, email);
+                                                if (setStudent(student, classSubjects, selectedClassRoom)) {
+                                                    displaySuccess("Student added successfully.");
+                                                } else {
+                                                    displayError("Failed to add student.");
+                                                }
+                                            }
+                                        }else if (studentChoice > 0 && studentChoice <= students.size()) {
                                             // check choice for view or edit
                                             boolean isStudentRunning = true;
                                             clearScreen();
@@ -475,7 +526,7 @@ public class ConsoleUI {
         return null;
     }
 
-    public static boolean setSubject(Subject subject, ClassRoom classRoom, Teacher teacher) {
+    public static boolean setSubject(Subject subject) {
         DatabaseManager dbManager = DatabaseManager.getInstance();
 
         // read mm relations
@@ -484,8 +535,8 @@ public class ConsoleUI {
         try {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
             stmt.setString(1, subject.getName());
-            stmt.setInt(2, teacher.getUid());
-            stmt.setInt(3, classRoom.getClassRoomId());
+            stmt.setInt(2, subject.getTeacher().getUid());
+            stmt.setInt(3, subject.getClassRoom().getClassRoomId());
             stmt.executeUpdate();
             return true;
         } catch (Exception e) {
@@ -533,6 +584,32 @@ public class ConsoleUI {
                         resultSet.getInt("classroom_id"),
                         resultSet.getString("name")
                 );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static ClassRoom setClassRoom(ClassRoom classRoom) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        // read mm relations
+        String query = "insert into classroom (name) values (?)";
+
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
+            stmt.setString(1, classRoom.getName());
+            int affectedRows = stmt.executeUpdate();
+            if(affectedRows > 0){
+                ResultSet resultSet = stmt.getGeneratedKeys();
+                if(resultSet.next()){
+                    classRoom = new ClassRoom(
+                            resultSet.getInt(1),
+                            classRoom.getName()
+                    );
+                    return classRoom;
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -621,17 +698,105 @@ public class ConsoleUI {
         return null;
     }
 
-    public static boolean setStudent(Student student, ClassRoom classRoom) {
+    public static Student getStudent(String username) {
         DatabaseManager dbManager = DatabaseManager.getInstance();
 
         // read mm relations
-        String query = "insert into student_classroom (student_id, classroom_id) values (?, ?)";
-
+        String query = "SELECT * FROM student WHERE username = ?";
         try {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
-            stmt.setInt(1, student.getUid());
-            stmt.setInt(2, classRoom.getClassRoomId());
+            stmt.setString(1, username);
+            ResultSet resultSet = stmt.executeQuery();
+            while (resultSet.next()) {
+                return new Student(
+                        resultSet.getInt("student_id"),
+                        resultSet.getString("first_name"),
+                        resultSet.getString("last_name"),
+                        resultSet.getString("username"),
+                        resultSet.getString("password"),
+                        resultSet.getString("email")
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
+    public static boolean updateStudent(Student student, ArrayList<Subject> subjects, ClassRoom classRoom) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        // read mm relations
+        String queryStudent = "update student set classroom_id = ? where student_id = ?";
+        String querySubject = "update student_subject set subject_id = ? where student_id = ?";
+
+        // set student to class
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(queryStudent);
+            stmt.setInt(1, classRoom.getClassRoomId());
+            stmt.setInt(2, student.getUid());
             stmt.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // set student to subjects
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(querySubject);
+            for (Subject subject : subjects) {
+                stmt.setInt(1, student.getUid());
+                stmt.setInt(2, subject.getSubjectId());
+                stmt.executeUpdate();
+            }
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static boolean setStudent(Student student, ArrayList<Subject> subjects, ClassRoom classRoom) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        // read mm relations
+        String queryStudent = "insert into student (classroom_id, first_name, last_name, username, password, email) values (?, ?, ?, ?, ?, ?)";
+        String querySubject = "insert into student_subject (student_id, subject_id) values (?, ?)";
+
+        // add student to class
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(queryStudent, PreparedStatement.RETURN_GENERATED_KEYS);
+            stmt.setInt(1, classRoom.getClassRoomId());
+            stmt.setString(2, student.getFirstName());
+            stmt.setString(3, student.getLastName());
+            stmt.setString(4, student.getUserName());
+            stmt.setString(5, student.getPassword());
+            stmt.setString(6, student.getEmail());
+            int affectedRows = stmt.executeUpdate();
+            if(affectedRows > 0){
+                ResultSet resultSet = stmt.getGeneratedKeys();
+                if(resultSet.next()){
+                    student = new Student(
+                            resultSet.getInt(1),
+                            student.getFirstName(),
+                            student.getLastName(),
+                            student.getUserName(),
+                            student.getPassword(),
+                            student.getEmail()
+                    );
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        // add student to subjects
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(querySubject);
+            for (Subject subject : subjects) {
+                stmt.setInt(1, student.getUid());
+                stmt.setInt(2, subject.getSubjectId());
+                stmt.executeUpdate();
+            }
             return true;
         } catch (Exception e) {
             e.printStackTrace();
