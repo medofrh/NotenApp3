@@ -38,9 +38,9 @@ CREATE TABLE
 
 CREATE TABLE
     student_subject (
+        id INT PRIMARY KEY AUTO_INCREMENT,
         student_id INT NOT NULL,
         subject_id INT NOT NULL,
-        PRIMARY KEY (student_id, subject_id),
         FOREIGN KEY (student_id) REFERENCES student (student_id),
         FOREIGN KEY (subject_id) REFERENCES subject (subject_id)
     );
