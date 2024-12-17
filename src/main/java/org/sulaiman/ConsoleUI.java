@@ -639,5 +639,23 @@ public class ConsoleUI {
         }
         return false;
     }
-    
+
+    public static boolean updateGrade(Student student, Subject subject, double gradeNumber) {
+        DatabaseManager dbManager = DatabaseManager.getInstance();
+
+        // read mm relations
+        String query = "update grade set grade_number = ? where student_id = ? and subject_id = ?";
+
+        try {
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
+            stmt.setDouble(1, gradeNumber);
+            stmt.setInt(2, student.getUid());
+            stmt.setInt(3, subject.getSubjectId());
+            stmt.executeUpdate();
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
