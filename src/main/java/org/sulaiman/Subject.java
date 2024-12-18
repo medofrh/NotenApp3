@@ -58,24 +58,8 @@ public class Subject implements FromDataBase{
         return classRoom;
     }
 
-    public void changeClassRoom(ClassRoom classRoom) {
-        if(this.classRoom != null)
-            this.classRoom.removeSubject(this);
-
-        this.classRoom = classRoom;
-        this.classRoom.addSubject(this);
-    }
-
     public Teacher getTeacher() {
         return teacher;
-    }
-
-    public void changeTeacher(Teacher teacher) {
-        if(this.teacher != null)
-            this.teacher.removeSubject(this);
-
-        this.teacher = teacher;
-        this.teacher.addSubject(this);
     }
 
     public void addStudent(Student student){
