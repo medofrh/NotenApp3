@@ -2,22 +2,24 @@ package org.sulaiman.dbConnection;
 
 import io.github.cdimascio.dotenv.Dotenv;
 
+import java.io.File;
+import java.io.FileWriter;
 import java.sql.*;
+import java.util.Scanner;
+
 public class MySQLConnection {
 //    private final static Dotenv dotenv = Dotenv.load();
     // TODO: Dotenv should be used to load the environment variables from the .env file after building the project from the same directory
-    private final static Dotenv dotenv;
+    private static Dotenv dotenv = null;
     static {
-        Dotenv tempDotenv;
+        checkEnvFile();
         try {
-            tempDotenv = Dotenv.configure()
+            dotenv = Dotenv.configure()
                     .directory("./")
                     .load();
         }catch (Exception e) {
             System.out.println("Error loading .env file: " + e.getMessage());
-            tempDotenv = null;
         }
-        dotenv = tempDotenv;
     }
     private final static String username = dotenv.get("DB_USER");
     private final static String password = dotenv.get("DB_PASS");
@@ -45,5 +47,36 @@ public class MySQLConnection {
 
     public static String getDatabaseName() {
         return database;
+    }
+
+    public static void checkEnvFile() {
+        File envFile = new File(".env");
+
+        if (!envFile.exists()){
+            System.out.println("Error: .env file does not exist. Creating one now...");
+
+            try (Scanner scanner = new Scanner(System.in); FileWriter writer = new FileWriter(envFile)){
+                System.out.print("Please enter the MySQL database host: ");
+                String host = scanner.nextLine();
+                System.out.print("Please enter the MySQL database port (default is 3306): ");
+                String port = scanner.nextLine();
+                System.out.print("Please enter the MySQL database name: ");
+                String database = scanner.nextLine();
+                System.out.print("Please enter the MySQL database username: ");
+                String username = scanner.nextLine();
+                System.out.print("Please enter the MySQL database password: ");
+                String password = scanner.nextLine();
+
+                envFile.createNewFile();
+                writer.write("DB_HOST=" + host + "\n");
+                writer.write("DB_PORT=" + port + "\n");
+                writer.write("DB_NAME=" + database + "\n");
+                writer.write("DB_USER=" + username + "\n");
+                writer.write("DB_PASS=" + password + "\n");
+            } catch (Exception e) {
+                System.out.println("Error creating .env file: " + e.getMessage());
+
+            }
+        }
     }
 }
