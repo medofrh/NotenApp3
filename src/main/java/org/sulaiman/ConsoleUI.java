@@ -3,6 +3,7 @@ package org.sulaiman;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ConsoleUI {
@@ -126,9 +127,9 @@ public class ConsoleUI {
             System.out.print("Enter your choice: ");
 
             try {
-                ArrayList<Subject> newSubjects = new ArrayList<>();
                 int choice = Integer.parseInt(scanner.nextLine());
                 if (choice == 0) {
+                    clearScreen();
                     isRunning = false;
                 } else if (choice == -1) {
                     // Add classroom
@@ -143,7 +144,7 @@ public class ConsoleUI {
                         if (subjectName.equals("0")){
                             isAddingSubject = false;
                         }else {
-                            newSubjects.add(setSubject(new Subject(0, subjectName, newClassRoom, teacher)));
+                            setSubject(new Subject(0, subjectName, newClassRoom, teacher));
                         }
                     }
                     // update the classRooms
@@ -168,6 +169,7 @@ public class ConsoleUI {
                         try {
                             int classChoice = Integer.parseInt(scanner.nextLine());
                             if (classChoice == 0) {
+                                clearScreen();
                                 isClassRunning = false;
                             } else if (classChoice > 0 && classChoice <= classSubjects.size()) {
                                 // Get all students in the class
@@ -178,7 +180,7 @@ public class ConsoleUI {
                                     students = getStudents(classSubjects.get(classChoice - 1));
                                     System.out.println("==============" + classSubjects.get(classChoice - 1).getName() + "==============");
                                     System.out.println("-1. Add Student");
-                                    for (int i = 0; i < students.size(); i++) {
+                                    for (int i = 0; i < Objects.requireNonNull(students).size(); i++) {
                                         System.out.println((i + 1) + ". " + students.get(i).getFirstName() + " " + students.get(i).getLastName());
                                     }
                                     System.out.println("0. Back");
@@ -187,6 +189,7 @@ public class ConsoleUI {
                                     try {
                                         int studentChoice = Integer.parseInt(scanner.nextLine());
                                         if (studentChoice == 0) {
+                                            clearScreen();
                                             isSubjectRunning = false;
                                         } else if (studentChoice == -1){
                                             System.out.print("Is the student already in the system? (y/n):");
@@ -237,6 +240,7 @@ public class ConsoleUI {
                                                 int studentChoice2 = Integer.parseInt(scanner.nextLine());
                                                 try {
                                                     if (studentChoice2 == 0) {
+                                                        clearScreen();
                                                         isStudentRunning = false;
                                                     } else if (studentChoice2 == 1) {
                                                         // Get the grade for the student
@@ -312,11 +316,6 @@ public class ConsoleUI {
     // Display success message
     public static void displaySuccess(String message) {
         System.out.println("Success: " + message);
-    }
-
-    // Display custom message
-    public static void displayMessage(String message) {
-        System.out.println(message);
     }
 
     // Clear screen
