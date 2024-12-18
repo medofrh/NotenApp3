@@ -52,10 +52,10 @@ public class MySQLConnection {
     public static void checkEnvFile() {
         File envFile = new File(".env");
 
-        if (!envFile.exists()){
+        if (!envFile.exists()) {
             System.out.println("Error: .env file does not exist. Creating one now...");
 
-            try (Scanner scanner = new Scanner(System.in); FileWriter writer = new FileWriter(envFile)){
+            try (Scanner scanner = new Scanner(System.in)) {
                 System.out.print("Please enter the MySQL database host: ");
                 String host = scanner.nextLine();
                 System.out.print("Please enter the MySQL database port (default is 3306): ");
@@ -67,15 +67,23 @@ public class MySQLConnection {
                 System.out.print("Please enter the MySQL database password: ");
                 String password = scanner.nextLine();
 
-                envFile.createNewFile();
-                writer.write("DB_HOST=" + host + "\n");
-                writer.write("DB_PORT=" + port + "\n");
-                writer.write("DB_NAME=" + database + "\n");
-                writer.write("DB_USER=" + username + "\n");
-                writer.write("DB_PASS=" + password + "\n");
+                // Create the file and write the contents
+                if (envFile.createNewFile()) {
+                    try (FileWriter writer = new FileWriter(envFile)) {
+                        writer.write("DB_HOST=" + host + "\n");
+                        writer.write("DB_PORT=" + (port.isEmpty() ? "3306" : port) + "\n");
+                        writer.write("DB_NAME=" + database + "\n");
+                        writer.write("DB_USER=" + username + "\n");
+                        writer.write("DB_PASS=" + password + "\n");
+                    }
+                    System.out.println("Created .env file successfully.");
+                    System.out.println("Please restart the application.");
+                    System.exit(0);
+                } else {
+                    System.out.println("Error: Failed to create .env file.");
+                }
             } catch (Exception e) {
                 System.out.println("Error creating .env file: " + e.getMessage());
-
             }
         }
     }
