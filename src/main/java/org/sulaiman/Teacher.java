@@ -33,28 +33,4 @@ public class Teacher extends AbstractUser {
         return this.classRoom;
     }
 
-    @Override
-    public boolean login() {
-        return false;
-    }
-
-    @Override
-    public boolean logout() {
-        return false;
-    }
-
-    @Override
-    public void changePassword() {
-
-    }
-
-    @Override
-    public void updateUserData() {
-
-    }
-
-    @Override
-    public void deleteAccount() {
-
-    }
 }
