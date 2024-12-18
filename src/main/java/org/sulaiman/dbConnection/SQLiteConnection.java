@@ -3,7 +3,6 @@ package org.sulaiman.dbConnection;
 import java.sql.*;
 import java.io.File;
 public class SQLiteConnection {
-//    static final String sqliteUrl = "jdbc:sqlite:local.db";
     // set database in resources in database folder
     private static final String sqliteUrl = "jdbc:sqlite:local.db";
     public static Connection getConnection() {
