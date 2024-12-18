@@ -13,24 +13,12 @@ public class Grade implements FromDataBase {
         this.gradeNumber = gradeNumber;
     }
 
-    public int getGradeId() {
-        return gradeId;
-    }
-
     public Student getStudent() {
         return student;
     }
 
-    public Subject getSubject() {
-        return subject;
-    }
-
     public double getGradeNumber() {
         return gradeNumber;
-    }
-
-    public void setGradeNumber(double gradeNumber) {
-        this.gradeNumber = gradeNumber;
     }
 
     @Override
