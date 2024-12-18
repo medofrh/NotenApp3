@@ -29,23 +29,9 @@ public class ClassRoom implements FromDataBase{
     public String getName() {
         return name;
     }
-    public void setName(String name) {
-        if(name == null || name.trim().isEmpty()){
-            throw new IllegalArgumentException("ClassRoom name can't be empty");
-        }
-        this.name = name;
-    }
 
     @Override
     public int getUid() {
         return this.classRoomId;
-    }
-
-    public String toString() {
-        return "ClassRoom{\n" +
-                "classRoomId=" + this.classRoomId +
-                ", name='" + name + '\'' +
-                ", subjects=" + subjects +
-                '}';
     }
 }
