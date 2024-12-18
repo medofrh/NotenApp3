@@ -24,21 +24,4 @@ public class Student extends AbstractUser {
         this.subjects.remove(subject);
         subject.removeStudent(this);
     }
-    public ArrayList<Subject> getSubjects() {
-        return this.subjects;
-    }
-
-    public ArrayList<Grade> getGrades()  {
-        ArrayList<Grade> grades = new ArrayList<>();
-
-        for (Subject subject : subjects) {
-            for (Grade grade : subject.getGrades()) {
-                if(grade.getStudent() == this) {
-                    grades.add(grade);
-                }
-            }
-        }
-
-        return grades;
-    }
 }
