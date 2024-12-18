@@ -40,20 +40,6 @@ public class DatabaseManager {
         }
     }
 
-    // select method for MySQL and SQLite databases
-    public ResultSet select(String sql) throws SQLException {
-        //filter the sql query to determine if it's a select query
-        if (!sql.trim().toLowerCase().startsWith("select")) {
-            throw new SQLException("Invalid query, only SELECT queries are allowed.");
-        }
-        PreparedStatement pstmt = connection.prepareStatement(sql);
-        return pstmt.executeQuery();
-    }
-
-    public boolean isOnline() {
-        return this.connection instanceof MySQLConnection;
-    }
-
     // get the connection
     public Connection getConnection() {
         return connection;
