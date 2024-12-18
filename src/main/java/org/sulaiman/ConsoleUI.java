@@ -7,15 +7,21 @@ import java.util.Objects;
 import java.util.Scanner;
 
 public class ConsoleUI {
-    private static boolean isRunning = true;
+    private static boolean isRunning = false;
 
     // Start the console UI
     public static void start() {
+        clearScreen();
         Scanner scanner = new Scanner(System.in);
+        isRunning = true;
 
         while (isRunning) {
             displayMainMenu();
-            String choice = scanner.nextLine();
+            if (!scanner.hasNextLine()) {
+                isRunning = false;
+                break;
+            }
+            String choice = scanner.nextLine().trim();
 
             switch (choice) {
                 case "1":
