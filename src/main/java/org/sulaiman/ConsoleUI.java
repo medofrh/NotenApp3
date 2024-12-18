@@ -114,7 +114,6 @@ public class ConsoleUI {
 
         while (isRunning) {
             System.out.println("==============Teacher Menu==============");
-            // TODO: press c to cancel
             System.out.println("-1. Add Classroom");
             // Get all classrooms
             ArrayList<ClassRoom> classRooms = getClassRooms(subjects);
@@ -127,6 +126,7 @@ public class ConsoleUI {
             System.out.print("Enter your choice: ");
 
             try {
+                ArrayList<Subject> newSubjects = new ArrayList<>();
                 int choice = Integer.parseInt(scanner.nextLine());
                 if (choice == 0) {
                     isRunning = false;
@@ -143,7 +143,7 @@ public class ConsoleUI {
                         if (subjectName.equals("0")){
                             isAddingSubject = false;
                         }else {
-                            setSubject(new Subject(0, subjectName, newClassRoom, teacher));
+                            newSubjects.add(setSubject(new Subject(0, subjectName, newClassRoom, teacher)));
                         }
                     }
                     // update the classRooms
@@ -175,6 +175,7 @@ public class ConsoleUI {
                                 boolean isSubjectRunning = true;
                                 clearScreen();
                                 while (isSubjectRunning) {
+                                    students = getStudents(classSubjects.get(classChoice - 1));
                                     System.out.println("==============" + classSubjects.get(classChoice - 1).getName() + "==============");
                                     System.out.println("-1. Add Student");
                                     for (int i = 0; i < students.size(); i++) {
@@ -195,11 +196,8 @@ public class ConsoleUI {
                                                 String username = scanner.nextLine();
                                                 Student student = getStudent(username);
                                                 if (student != null) {
-                                                    updateStudent(student, classSubjects, selectedClassRoom);
+                                                    updateStudent(student, classSubjects.get(classChoice - 1), selectedClassRoom);
                                                     displaySuccess("Student added successfully.");
-
-                                                    // update the students
-                                                    students = getStudents(classSubjects.get(classChoice - 1));
                                                 } else {
                                                     displayError("Student not found.");
                                                 }
@@ -215,12 +213,11 @@ public class ConsoleUI {
                                                 System.out.print("Enter the student's email: ");
                                                 String email = scanner.nextLine();
                                                 Student student = new Student(0, firstName, lastName, username, password, email);
-                                                if (setStudent(student, classSubjects, selectedClassRoom)) {
+                                                if (setStudent(student, classSubjects.get(classChoice - 1), selectedClassRoom)) {
                                                     displaySuccess("Student added successfully.");
                                                 } else {
                                                     displayError("Failed to add student.");
                                                 }
-                                                students = getStudents(classSubjects.get(classChoice - 1));
                                             }
                                         }else if (studentChoice > 0 && studentChoice <= students.size()) {
                                             // check choice for view or edit
@@ -531,23 +528,31 @@ public class ConsoleUI {
         return null;
     }
 
-    public static boolean setSubject(Subject subject) {
+    public static Subject setSubject(Subject subject) {
         DatabaseManager dbManager = DatabaseManager.getInstance();
 
         // read mm relations
         String query = "insert into subject (name, teacher_id, classroom_id) values (?, ?, ?)";
 
         try {
-            PreparedStatement stmt = dbManager.getConnection().prepareStatement(query);
+            PreparedStatement stmt = dbManager.getConnection().prepareStatement(query, PreparedStatement.RETURN_GENERATED_KEYS);
             stmt.setString(1, subject.getName());
             stmt.setInt(2, subject.getTeacher().getUid());
             stmt.setInt(3, subject.getClassRoom().getClassRoomId());
             stmt.executeUpdate();
-            return true;
+            ResultSet resultSet = stmt.getGeneratedKeys();
+            if(resultSet.next()){
+                return new Subject(
+                        resultSet.getInt(1),
+                        subject.getName(),
+                        subject.getClassRoom(),
+                        subject.getTeacher()
+                );
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return false;
+        return null;
     }
 
     public static Teacher getTeacher(int teacherId) {
@@ -728,12 +733,13 @@ public class ConsoleUI {
         return null;
     }
 
-    public static boolean updateStudent(Student student, ArrayList<Subject> subjects, ClassRoom classRoom) {
+    public static boolean updateStudent(Student student, Subject subject, ClassRoom classRoom) {
         DatabaseManager dbManager = DatabaseManager.getInstance();
 
         // read mm relations
         String queryStudent = "update student set classroom_id = ? where student_id = ?";
         String querySubject = "update student_subject set subject_id = ? where student_id = ?";
+
 
         // set student to class
         try {
@@ -748,11 +754,9 @@ public class ConsoleUI {
         // set student to subjects
         try {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(querySubject);
-            for (Subject subject : subjects) {
-                stmt.setInt(1, student.getUid());
-                stmt.setInt(2, subject.getSubjectId());
-                stmt.executeUpdate();
-            }
+            stmt.setInt(1, subject.getSubjectId());
+            stmt.setInt(2, student.getUid());
+            stmt.executeUpdate();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -760,7 +764,7 @@ public class ConsoleUI {
         return false;
     }
 
-    public static boolean setStudent(Student student, ArrayList<Subject> subjects, ClassRoom classRoom) {
+    public static boolean setStudent(Student student, Subject subject, ClassRoom classRoom) {
         DatabaseManager dbManager = DatabaseManager.getInstance();
 
         // read mm relations
@@ -797,11 +801,11 @@ public class ConsoleUI {
         // add student to subjects
         try {
             PreparedStatement stmt = dbManager.getConnection().prepareStatement(querySubject);
-            for (Subject subject : subjects) {
-                stmt.setInt(1, student.getUid());
-                stmt.setInt(2, subject.getSubjectId());
-                stmt.executeUpdate();
-            }
+
+            stmt.setInt(1, student.getUid());
+            stmt.setInt(2, subject.getSubjectId());
+            stmt.executeUpdate();
+
             return true;
         } catch (Exception e) {
             e.printStackTrace();
